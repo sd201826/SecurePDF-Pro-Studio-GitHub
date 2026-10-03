@@ -4,9 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecurePDF Pro Studio — Vault Dashboard</title>
+    
+    <!-- ========================================== -->
+    <!-- DESKTOP & MOBILE HOME SCREEN SHORTCUT ICONS -->
+    <!-- ========================================== -->
+    <meta name="theme-color" content="#0a0d14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SecurePDF">
+    <meta name="application-name" content="SecurePDF">
+    
+    <!-- Browser Tab Icon (Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.4 2.8 2.8V11c.6 0 1.2.6 1.2 1.2v3.5c0 .7-.6 1.3-1.2 1.3H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.8C9.2 8.4 10.6 7 12 7zm0 1.2c-.7 0-1.5.7-1.5 1.6V11h3V9.8c0-.9-.8-1.6-1.5-1.6z'/></svg>">
+    
+    <!-- Mobile/Desktop Shortcut App Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' fill='%230a0d14'/><path d='M12 3L5 6v5.5c0 4.5 3.2 8.7 7 10.1 3.8-1.4 7-5.6 7-10.1V6l-7-3zm0 5c1.1 0 2 .9 2 2v2.2c0 .6-.4 1.1-.9 1.3v2.8c0 .4-.3.7-.7.7h-1.1c-.4 0-.7-.3-.7-.7v-2.8c-.5-.2-.9-.7-.9-1.3V10c0-1.1.9-2 2-2zm0 1c-.6 0-1 .4-1 1v2h2v-2c0-.6-.4-1-1-1z' fill='%2306b6d4'/></svg>">
+    <!-- ========================================== -->
+
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- PDF Libraries & Confetti -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -14,65 +33,32 @@
 
     <style>
         :root {
-            --bg-dark: #0a0d14;
-            --bg-card: #121824;
-            --bg-sidebar: #0d111a;
-            --bg-card-hover: #192233;
-            --accent-primary: #6366f1;
-            --accent-cyan: #06b6d4;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #1e293b;
-            --glow-color: rgba(99, 102, 241, 0.25);
+            --bg-dark: #0a0d14; --bg-card: #121824; --bg-sidebar: #0d111a;
+            --bg-card-hover: #192233; --accent-primary: #6366f1; --accent-cyan: #06b6d4;
+            --accent-green: #10b981; --accent-red: #ef4444; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --border-color: #1e293b; --glow-color: rgba(99, 102, 241, 0.25);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-        }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
 
         /* Sidebar */
         .sidebar {
-            width: 260px;
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
-            position: fixed;
-            height: 100vh;
-            z-index: 50;
+            width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; padding: 1.5rem; position: fixed; height: 100vh; z-index: 50;
         }
-
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 800;
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; gap: 0.75rem; font-weight: 800; font-size: 1.2rem;
+            margin-bottom: 3rem; background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
         .logo i { color: var(--accent-cyan); font-size: 1.5rem; -webkit-text-fill-color: initial; }
-
         .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
-
         .nav-item {
             display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem;
             border-radius: 8px; color: var(--text-muted); text-decoration: none;
             font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
         }
-
         .nav-item:hover, .nav-item.active { background: var(--bg-card-hover); color: var(--text-main); }
         .nav-item.active { border-left: 3px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.1); }
         .nav-item i { width: 20px; text-align: center; }
@@ -83,10 +69,8 @@
             background-image: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
                               radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
         }
-
         .section-view { display: none; animation: fadeIn 0.3s ease; }
         .section-view.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .page-header { margin-bottom: 2rem; }
@@ -94,11 +78,7 @@
         .page-desc { color: var(--text-muted); font-size: 0.95rem; }
 
         /* Vault Table */
-        .vault-container {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 12px; overflow: hidden;
-        }
-
+        .vault-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background: rgba(255,255,255,0.03); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -120,7 +100,6 @@
             background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
             padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 2rem; max-width: 800px;
         }
-
         .dropzone {
             border: 2px dashed var(--border-color); border-radius: 12px; padding: 3rem 2rem;
             text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; transition: all 0.3s ease;
@@ -160,7 +139,7 @@
         .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
 
-        /* Toast Notification System */
+        /* Toast Notification */
         #toast {
             visibility: hidden; min-width: 280px; background-color: var(--bg-card-hover);
             color: #fff; text-align: center; border-radius: 8px; padding: 16px;
@@ -208,21 +187,12 @@
                 <h1 class="page-title">Security Vault</h1>
                 <p class="page-desc">Manage your previously protected and unlocked files. Automatically synced to Local Storage.</p>
             </div>
-
             <div class="vault-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>File Name</th>
-                            <th>Status</th>
-                            <th>Password</th>
-                            <th>Date</th>
-                            <th>Manage</th>
-                        </tr>
+                        <tr><th>File Name</th><th>Status</th><th>Password</th><th>Date</th><th>Manage</th></tr>
                     </thead>
-                    <tbody id="vault-table-body">
-                        <!-- Dynamic Content -->
-                    </tbody>
+                    <tbody id="vault-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -233,7 +203,6 @@
                 <h1 class="page-title">Lock & Protect PDF</h1>
                 <p class="page-desc">Encrypt files with military-grade AES-128 bit security.</p>
             </div>
-
             <div class="card">
                 <div class="dropzone" id="protect-dropzone" onclick="document.getElementById('protect-file').click()">
                     <i class="fa-solid fa-file-shield"></i>
@@ -259,7 +228,6 @@
                 <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="runProtect()">
                     <i class="fa-solid fa-lock"></i> Encrypt & Auto-Save
                 </button>
-
                 <div class="terminal-log" id="protect-log" style="display: none;"></div>
             </div>
         </div>
@@ -270,7 +238,6 @@
                 <h1 class="page-title">Unprotect PDF (Remove Password)</h1>
                 <p class="page-desc">Upload a locked PDF and enter its password to permanently remove the security.</p>
             </div>
-
             <div class="card">
                 <div class="dropzone" id="unprotect-dropzone" onclick="document.getElementById('unprotect-file').click()">
                     <i class="fa-solid fa-unlock-keyhole"></i>
@@ -291,7 +258,6 @@
                 <button class="btn btn-danger" style="width: 100%; justify-content: center;" onclick="runUnprotect()">
                     <i class="fa-solid fa-fire"></i> Strip Security & Auto-Save
                 </button>
-
                 <div class="terminal-log" id="unprotect-log" style="display: none;"></div>
             </div>
         </div>
@@ -305,16 +271,10 @@
         function showToast(message, type = 'success') {
             const toast = document.getElementById("toast");
             const msgEl = document.getElementById("toast-msg");
-            
-            toast.className = ""; // Reset
+            toast.className = "";
             msgEl.innerHTML = message;
-            
-            if (type === 'danger') {
-                toast.classList.add('toast-danger');
-            } else {
-                toast.classList.add('toast-success');
-            }
-            
+            if (type === 'danger') toast.classList.add('toast-danger');
+            else toast.classList.add('toast-success');
             toast.classList.add("show");
             setTimeout(() => { toast.classList.remove("show"); }, 3800);
         }
@@ -323,42 +283,29 @@
         function switchTab(tabId) {
             document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(`view-${tabId}`).classList.add('active');
             event.currentTarget.classList.add('active');
-            
             if(tabId === 'dashboard') renderVault();
         }
 
-        // --- VAULT LOCALSTORAGE AUTO-SAVE LOGIC ---
+        // --- VAULT LOCALSTORAGE LOGIC ---
         let vaultData = JSON.parse(localStorage.getItem('secureVault')) || [];
 
         function saveToVault(filename, type, password) {
-            const entry = {
-                id: Date.now(),
-                filename: filename,
-                type: type, // 'locked' or 'unlocked'
-                password: password,
-                date: new Date().toLocaleDateString()
-            };
+            const entry = { id: Date.now(), filename: filename, type: type, password: password, date: new Date().toLocaleDateString() };
             vaultData.push(entry);
-            
-            // Automatic Save to Local Storage
             localStorage.setItem('secureVault', JSON.stringify(vaultData));
             showToast("<i class='fa-solid fa-floppy-disk'></i> Auto-saved to Local Storage", 'success');
         }
 
         function deleteVaultEntry(id) {
-            if (confirm("Are you sure you want to permanently delete this file record and its password from local storage?")) {
-                // Permanently remove from array
+            if (confirm("Are you sure you want to permanently delete this file record and its password?")) {
                 vaultData = vaultData.filter(item => item.id !== id);
-                
-                // Update Local Storage
                 localStorage.setItem('secureVault', JSON.stringify(vaultData));
+                document.getElementById('protect-pass').value = '';
+                document.getElementById('unprotect-pass').value = '';
                 renderVault();
-                
-                // Show secure deletion toast
-                showToast("<i class='fa-solid fa-trash-can'></i> Password & record permanently removed", 'danger');
+                showToast("<i class='fa-solid fa-trash-can'></i> Password & record permanently wiped", 'danger');
             }
         }
 
@@ -379,48 +326,41 @@
         function renderVault() {
             const tbody = document.getElementById('vault-table-body');
             tbody.innerHTML = '';
-            
             if (vaultData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-box-open"></i>
-                        <h3>Your Vault is Empty</h3>
-                        <p>Protected and unlocked files will automatically save here.</p>
-                    </div>
-                </td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>Your Vault is Empty</h3><p>Protected and unlocked files will automatically save here.</p></div></td></tr>`;
                 return;
             }
 
             vaultData.slice().reverse().forEach(item => {
-                const badge = item.type === 'locked' 
-                    ? `<span class="badge badge-locked">LOCKED</span>` 
-                    : `<span class="badge badge-unlocked">UNLOCKED</span>`;
-                
-                const passHtml = item.password ? `
-                    <div class="password-reveal">
-                        <span id="pass-${item.id}" data-pass="${item.password}" data-hidden="true">••••••••</span>
-                        <button class="action-btn" onclick="togglePassword(${item.id})"><i id="icon-${item.id}" class="fa-solid fa-eye"></i></button>
-                    </div>
-                ` : `<span style="color:var(--text-muted)">N/A</span>`;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-weight: 600;">${item.filename}</td>
-                        <td>${badge}</td>
-                        <td>${passHtml}</td>
-                        <td>${item.date}</td>
-                        <td>
-                            <button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Permanently Delete Password">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                const badge = item.type === 'locked' ? `<span class="badge badge-locked">LOCKED</span>` : `<span class="badge badge-unlocked">UNLOCKED</span>`;
+                const passHtml = item.password ? `<div class="password-reveal"><span id="pass-${item.id}" data-pass="${item.password}" data-hidden="true">••••••••</span><button class="action-btn" onclick="togglePassword(${item.id})"><i id="icon-${item.id}" class="fa-solid fa-eye"></i></button></div>` : `<span style="color:var(--text-muted)">N/A</span>`;
+                tbody.innerHTML += `<tr><td style="font-weight: 600;">${item.filename}</td><td>${badge}</td><td>${passHtml}</td><td>${item.date}</td><td><button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Permanently Delete Password"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
         }
-        renderVault(); // Initial load
+        renderVault();
 
-        // --- PROTECT LOGIC ---
+        // --- PROTECT WIPE FUNCTION ---
+        function resetProtect() {
+            pFile = null;
+            document.getElementById('protect-file').value = '';
+            document.getElementById('protect-dropzone').style.display = 'block';
+            document.getElementById('protect-preview').style.display = 'none';
+            document.getElementById('protect-log').style.display = 'none';
+            document.getElementById('protect-pass').value = '';
+            document.getElementById('protect-outname').value = '';
+        }
+
+        // --- UNPROTECT WIPE FUNCTION ---
+        function resetUnprotect() {
+            uFile = null;
+            document.getElementById('unprotect-file').value = '';
+            document.getElementById('unprotect-dropzone').style.display = 'block';
+            document.getElementById('unprotect-preview').style.display = 'none';
+            document.getElementById('unprotect-log').style.display = 'none';
+            document.getElementById('unprotect-pass').value = '';
+        }
+
+        // PROTECT RUN
         let pFile = null;
         document.getElementById('protect-file').addEventListener('change', (e) => {
             if(e.target.files[0]) {
@@ -428,17 +368,10 @@
                 document.getElementById('protect-dropzone').style.display = 'none';
                 document.getElementById('protect-preview').style.display = 'flex';
                 document.getElementById('protect-filename').innerText = pFile.name;
-                
                 let base = pFile.name.substring(0, pFile.name.lastIndexOf('.')) || pFile.name;
                 document.getElementById('protect-outname').value = `${base}-protected.pdf`;
             }
         });
-        function resetProtect() {
-            pFile = null;
-            document.getElementById('protect-file').value = '';
-            document.getElementById('protect-dropzone').style.display = 'block';
-            document.getElementById('protect-preview').style.display = 'none';
-        }
 
         async function runProtect() {
             if(!pFile) return alert('Upload a file first!');
@@ -447,8 +380,7 @@
             if(!pass) return alert('Enter a password!');
 
             const log = document.getElementById('protect-log');
-            log.style.display = 'block';
-            log.innerHTML = '> Starting AES-128 Encryption...<br>';
+            log.style.display = 'block'; log.innerHTML = '> Starting AES-128 Encryption...<br>';
 
             try {
                 const { jsPDF } = window.jspdf;
@@ -457,24 +389,16 @@
                 if (pFile.type === 'application/pdf') {
                     const arr = await pFile.arrayBuffer();
                     const pdf = await pdfjsLib.getDocument({ data: arr }).promise;
-                    
                     for(let i=1; i<=pdf.numPages; i++) {
                         log.innerHTML += `> Encrypting Page ${i}/${pdf.numPages}...<br>`;
                         const page = await pdf.getPage(i);
                         const vp = page.getViewport({ scale: 1.5 });
-                        const canvas = document.createElement('canvas');
-                        canvas.width = vp.width; canvas.height = vp.height;
+                        const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
                         await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
                         const img = canvas.toDataURL('image/jpeg', 0.85);
-
                         const orient = vp.width > vp.height ? 'l' : 'p';
-                        if(i===1) {
-                            doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height], encryption: { userPassword: pass, ownerPassword: pass } });
-                            doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
-                        } else {
-                            doc.addPage([vp.width, vp.height], orient);
-                            doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
-                        }
+                        if(i===1) { doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height], encryption: { userPassword: pass, ownerPassword: pass } }); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
+                        else { doc.addPage([vp.width, vp.height], orient); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                     }
                 } else {
                     doc = new jsPDF({ encryption: { userPassword: pass, ownerPassword: pass } });
@@ -482,20 +406,16 @@
                     doc.addImage(b64, 'JPEG', 10, 10, 190, 0);
                 }
 
-                log.innerHTML += '> Securing Vault Record...<br>';
                 saveToVault(outname, 'locked', pass);
-                
                 log.innerHTML += '> Success! Downloading...<br>';
                 doc.save(outname);
                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 
-                setTimeout(resetProtect, 2000);
-            } catch(e) {
-                log.innerHTML += `<span style="color:red">> Error: ${e.message}</span><br>`;
-            }
+                setTimeout(resetProtect, 2000); 
+            } catch(e) { log.innerHTML += `<span style="color:red">> Error: ${e.message}</span><br>`; }
         }
 
-        // --- UNPROTECT LOGIC ---
+        // UNPROTECT RUN
         let uFile = null;
         document.getElementById('unprotect-file').addEventListener('change', (e) => {
             if(e.target.files[0]) {
@@ -505,13 +425,6 @@
                 document.getElementById('unprotect-filename').innerText = uFile.name;
             }
         });
-        function resetUnprotect() {
-            uFile = null;
-            document.getElementById('unprotect-file').value = '';
-            document.getElementById('unprotect-dropzone').style.display = 'block';
-            document.getElementById('unprotect-preview').style.display = 'none';
-            document.getElementById('unprotect-log').style.display = 'none';
-        }
 
         async function runUnprotect() {
             if(!uFile) return alert('Upload a locked PDF first!');
@@ -519,55 +432,36 @@
             if(!pass) return alert('Enter the current password to unlock it!');
 
             const log = document.getElementById('unprotect-log');
-            log.style.display = 'block';
-            log.innerHTML = '> Attempting to breach security with provided password...<br>';
+            log.style.display = 'block'; log.innerHTML = '> Attempting to breach security...<br>';
 
             try {
                 const arr = await uFile.arrayBuffer();
-                
                 const pdf = await pdfjsLib.getDocument({ data: arr, password: pass }).promise;
-                
                 log.innerHTML += '> Password Accepted! Removing encryption...<br>';
-                const { jsPDF } = window.jspdf;
-                let doc = null;
-
+                
+                const { jsPDF } = window.jspdf; let doc = null;
                 for(let i=1; i<=pdf.numPages; i++) {
                     log.innerHTML += `> Extracting Page ${i}/${pdf.numPages}...<br>`;
                     const page = await pdf.getPage(i);
                     const vp = page.getViewport({ scale: 1.5 });
-                    const canvas = document.createElement('canvas');
-                    canvas.width = vp.width; canvas.height = vp.height;
+                    const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
                     await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
                     const img = canvas.toDataURL('image/jpeg', 0.85);
-
                     const orient = vp.width > vp.height ? 'l' : 'p';
-                    if(i===1) {
-                        doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height] });
-                        doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
-                    } else {
-                        doc.addPage([vp.width, vp.height], orient);
-                        doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
-                    }
+                    if(i===1) { doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height] }); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
+                    else { doc.addPage([vp.width, vp.height], orient); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                 }
 
                 let outname = uFile.name.replace('.pdf', '-unlocked.pdf');
-                
-                log.innerHTML += '> Security Stripped. Auto-Saving to Vault...<br>';
                 saveToVault(outname, 'unlocked', pass);
-                
                 log.innerHTML += '> Success! Downloading unlocked PDF...<br>';
                 doc.save(outname);
                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 
-                setTimeout(resetUnprotect, 2000);
-
+                setTimeout(resetUnprotect, 2000); 
             } catch(e) {
-                if(e.name === 'PasswordException') {
-                    log.innerHTML += `<span style="color:var(--accent-red)">> ACCESS DENIED: Incorrect Password.</span><br>`;
-                    showToast("Access Denied: Incorrect Password", 'danger');
-                } else {
-                    log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`;
-                }
+                if(e.name === 'PasswordException') { log.innerHTML += `<span style="color:var(--accent-red)">> ACCESS DENIED: Incorrect Password.</span><br>`; showToast("Access Denied: Incorrect Password", 'danger'); }
+                else { log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`; }
             }
         }
     </script>
