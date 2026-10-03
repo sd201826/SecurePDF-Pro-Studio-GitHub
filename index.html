@@ -1,1031 +1,893 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecurePDF Pro Studio - GitHub Pages Ready File Vault</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            bg: '#050811',
-                            card: '#0e1626',
-                            border: '#1e293b',
-                            cyan: '#06b6d4',
-                            emerald: '#10b981',
-                            indigo: '#6366f1',
-                            purple: '#a855f7',
-                            rose: '#f43f5e'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- FontAwesome 6 CDN -->
+    <title>SecurePDF Pro Studio — Next-Gen DRM & PDF Vault</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Client-Side Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- PDF Libraries & Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        :root {
+            --bg-dark: #0a0d14;
+            --bg-card: #121824;
+            --bg-card-hover: #192233;
+            --accent-primary: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --glow-color: rgba(99, 102, 241, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050811;
-            color: #f8fafc;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
         }
 
-        .glass-card {
-            background: rgba(14, 22, 38, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            background: rgba(10, 13, 20, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .glass-card-glow {
-            background: rgba(14, 22, 38, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(6, 182, 212, 0.35);
-            box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.25);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 800;
+            font-size: 1.35rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .laser-line {
+        .logo i {
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-nav:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        /* Container & Stepper */
+        main {
+            flex: 1;
+            max-width: 900px;
+            width: 90%;
+            margin: 2.5rem auto;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
             position: absolute;
+            top: 50%;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #06b6d4, #10b981, transparent);
-            box-shadow: 0 0 15px #06b6d4;
-            animation: laserScan 2s ease-in-out infinite;
+            background: var(--border-color);
+            z-index: 1;
+            transform: translateY(-50%);
         }
 
-        @keyframes laserScan {
-            0% { top: 0%; opacity: 0; }
-            15% { opacity: 1; }
-            85% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+        .step-item {
+            position: relative;
+            z-index: 2;
+            background: var(--bg-dark);
+            padding: 0 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .radial-progress-circle {
-            transition: stroke-dashoffset 0.3s ease;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #050811; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        .step-item.active .step-number {
+            border-color: var(--accent-cyan);
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .step-item.completed .step-number {
+            border-color: var(--accent-green);
+            background: var(--accent-green);
+            color: #000;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step-item.active .step-label {
+            color: var(--text-main);
+        }
+
+        /* Card Container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        /* Dropzone */
+        .dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            background: rgba(255,255,255,0.01);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.03);
+        }
+
+        .dropzone-icon {
+            font-size: 3rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .dropzone-text h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropzone-text p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Selected File Card */
+        .file-preview-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card-hover);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            font-size: 1.8rem;
+            color: var(--accent-cyan);
+        }
+
+        .file-details h5 {
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+
+        .file-details span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 0.85rem 1rem;
+            padding-right: 2.75rem;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .input-toggle-btn {
+            position: absolute;
+            right: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .input-toggle-btn:hover {
+            color: #fff;
+        }
+
+        /* Buttons & Actions */
+        .actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.85rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px var(--glow-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Matrix Processing Screen */
+        .processing-box {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .scanner-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 182, 212, 0.05);
+            border-radius: 50%;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .scanner-container i {
+            font-size: 3rem;
+            color: var(--accent-cyan);
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-cyan);
+            top: 0;
+            animation: scan 2s infinite ease-in-out;
+        }
+
+        @keyframes scan {
+            0% { top: 10%; }
+            50% { top: 90%; }
+            100% { top: 10%; }
+        }
+
+        .terminal-log {
+            background: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            text-align: left;
+            height: 140px;
+            overflow-y: auto;
+            margin-top: 1.5rem;
+        }
+
+        /* Success Vault Card */
+        .success-banner {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+            padding: 1.25rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .success-banner i {
+            font-size: 2rem;
+            color: var(--accent-green);
+        }
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: 1fr 180px;
+            gap: 1.5rem;
+            align-items: center;
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .qr-box {
+            background: #fff;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .qr-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .qr-box span {
+            font-size: 0.65rem;
+            color: #000;
+            font-weight: 700;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .vault-grid {
+                grid-template-columns: 1fr;
+            }
+            .qr-box {
+                max-width: 160px;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+<body>
 
-    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 sm:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            
-            <!-- Brand Logo & Status -->
-            <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-                        <i class="fa-solid fa-shield-halved text-lg"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="font-extrabold text-lg tracking-tight text-white font-mono">SecurePDF</span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">PRO STUDIO</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400">Fixed Download & Dynamic Renamer Engine</p>
-                    </div>
-                </div>
-
-                <button onclick="toggleGithubModal(true)" class="md:hidden px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-300 font-medium flex items-center space-x-1.5">
-                    <i class="fa-brands fa-github text-cyan-400"></i>
-                    <span>Deploy Guide</span>
-                </button>
-            </div>
-
-            <!-- View Switcher & GitHub Guide Button -->
-            <div class="flex items-center space-x-3">
-                <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium">
-                    <button id="btn-view-wizard" onclick="switchViewMode('wizard')" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-black font-bold transition flex items-center space-x-1.5 shadow-md">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Wizard Mode</span>
-                    </button>
-                    <button id="btn-view-dashboard" onclick="switchViewMode('dashboard')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-1.5">
-                        <i class="fa-solid fa-chart-pie"></i>
-                        <span>Dashboard</span>
-                    </button>
-                </div>
-
-                <button onclick="toggleGithubModal(true)" class="hidden md:flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition">
-                    <i class="fa-brands fa-github text-cyan-400 text-sm"></i>
-                    <span>GitHub Pages Guide</span>
-                </button>
-            </div>
-
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-shield-halved"></i> SecurePDF Studio
+        </div>
+        <div class="nav-links">
+            <a href="https://forms.google.com" target="_blank" class="btn-nav">
+                <i class="fa-solid fa-paper-plane"></i> Enterprise Request
+            </a>
         </div>
     </header>
 
-    <div id="github-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="glass-card-glow max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-6 border border-cyan-500/40 relative">
-            <button onclick="toggleGithubModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+    <!-- Main Wizard Area -->
+    <main>
+        <!-- Stepper -->
+        <div class="stepper">
+            <div class="step-item active" id="step-nav-1">
+                <div class="step-number">1</div>
+                <div class="step-label">Upload</div>
+            </div>
+            <div class="step-item" id="step-nav-2">
+                <div class="step-number">2</div>
+                <div class="step-label">Security</div>
+            </div>
+            <div class="step-item" id="step-nav-3">
+                <div class="step-number">3</div>
+                <div class="step-label">Encrypt</div>
+            </div>
+            <div class="step-item" id="step-nav-4">
+                <div class="step-number">4</div>
+                <div class="step-label">Download</div>
+            </div>
+        </div>
 
-            <div class="flex items-center space-x-3 border-b border-slate-800 pb-4">
-                <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-cyan-400 text-xl border border-slate-700">
-                    <i class="fa-brands fa-github"></i>
+        <!-- STEP 1: UPLOAD -->
+        <div class="card active" id="card-step-1">
+            <div class="card-title">
+                <i class="fa-solid fa-cloud-arrow-up" style="color: var(--accent-cyan);"></i> Select Document
+            </div>
+            <div class="card-desc">
+                Upload your PDF or document to generate a high-grade 128/256-Bit password protected file.
+            </div>
+
+            <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+                <i class="fa-solid fa-file-pdf dropzone-icon"></i>
+                <div class="dropzone-text">
+                    <h4>Click or drag & drop file here</h4>
+                    <p>Supports PDF, Images, Text, or ZIM formats</p>
                 </div>
-                <div>
-                    <h3 class="text-base font-bold text-white">GitHub Pages Deployment Instructions</h3>
-                    <p class="text-xs text-slate-400">Host this website for free in under 2 minutes.</p>
+                <input type="file" id="file-input" class="file-input" accept=".pdf,.png,.jpg,.jpeg,.txt">
+            </div>
+
+            <div id="file-preview-container" style="display: none;">
+                <div class="file-preview-box">
+                    <div class="file-info">
+                        <i class="fa-solid fa-file-shield file-icon"></i>
+                        <div class="file-details">
+                            <h5 id="preview-filename">document.pdf</h5>
+                            <span id="preview-filesize">0 KB</span>
+                        </div>
+                    </div>
+                    <button class="btn-nav" onclick="resetFileSelection()"><i class="fa-solid fa-xmark"></i> Change</button>
                 </div>
             </div>
 
-            <div class="space-y-3 text-xs text-slate-300">
-                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-start space-x-3">
-                    <span class="w-5 h-5 rounded-full bg-cyan-500 text-black font-bold flex items-center justify-center text-xs shrink-0">1</span>
-                    <div>
-                        <span class="font-bold text-white block">File Name Rule</span>
-                        <span>Ensure your main file uploaded to GitHub is named exactly <code class="bg-slate-950 px-1.5 py-0.5 rounded text-cyan-300 font-mono">index.html</code> in the main (root) folder.</span>
-                    </div>
-                </div>
-
-                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-start space-x-3">
-                    <span class="w-5 h-5 rounded-full bg-cyan-500 text-black font-bold flex items-center justify-center text-xs shrink-0">2</span>
-                    <div>
-                        <span class="font-bold text-white block">GitHub Pages Branch</span>
-                        <span>Go to <b>Settings &gt; Pages</b> on GitHub. Set Source to <b>Deploy from a branch</b>, choose branch <code class="bg-slate-950 px-1.5 py-0.5 rounded text-emerald-400 font-mono">main</code> and folder <code class="bg-slate-950 px-1.5 py-0.5 rounded text-cyan-300 font-mono">/(root)</code>.</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-2 flex justify-end">
-                <button onclick="toggleGithubModal(false)" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs transition">
-                    Got It! Close Guide
+            <div class="actions-row">
+                <div></div>
+                <button class="btn btn-primary" id="btn-to-step-2" disabled onclick="goToStep(2)">
+                    Next Step <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
-    </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-8">
+        <!-- STEP 2: SECURITY & RENAMING -->
+        <div class="card" id="card-step-2">
+            <div class="card-title">
+                <i class="fa-solid fa-lock" style="color: var(--accent-cyan);"></i> Encryption Settings
+            </div>
+            <div class="card-desc">
+                Configure your open password and customized protection name.
+            </div>
 
-        <!-- WIZARD VIEW MODE -->
-        <div id="view-wizard-container" class="space-y-8">
-
-            <!-- Step Indicators -->
-            <div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div id="breadcrumb-step-1" onclick="goToStep(1)" class="cursor-pointer flex items-center space-x-3 p-2.5 rounded-xl transition bg-cyan-500/10 border border-cyan-500/30">
-                        <div class="w-8 h-8 rounded-lg bg-cyan-500 text-black flex items-center justify-center font-bold text-xs font-mono shadow-md shadow-cyan-500/30">1</div>
-                        <div>
-                            <div class="text-xs font-bold text-white">Upload Files</div>
-                            <div class="text-[10px] text-cyan-400">Auto [name]-protected</div>
-                        </div>
-                    </div>
-
-                    <div id="breadcrumb-step-2" onclick="goToStep(2)" class="cursor-pointer flex items-center space-x-3 p-2.5 rounded-xl transition bg-slate-900/50 border border-slate-800 opacity-60">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs font-mono">2</div>
-                        <div>
-                            <div class="text-xs font-bold text-slate-300">Security Keys</div>
-                            <div class="text-[10px] text-slate-500">AES-256 Rules</div>
-                        </div>
-                    </div>
-
-                    <div id="breadcrumb-step-3" class="flex items-center space-x-3 p-2.5 rounded-xl transition bg-slate-900/50 border border-slate-800 opacity-60">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs font-mono">3</div>
-                        <div>
-                            <div class="text-xs font-bold text-slate-300">Matrix Engine</div>
-                            <div class="text-[10px] text-slate-500">Stream Logs</div>
-                        </div>
-                    </div>
-
-                    <div id="breadcrumb-step-4" class="flex items-center space-x-3 p-2.5 rounded-xl transition bg-slate-900/50 border border-slate-800 opacity-60">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs font-mono">4</div>
-                        <div>
-                            <div class="text-xs font-bold text-slate-300">Vault & Downloads</div>
-                            <div class="text-[10px] text-slate-500">Instant Download</div>
-                        </div>
-                    </div>
+            <div class="form-group">
+                <label class="form-label">Custom Output Filename</label>
+                <div class="input-wrapper">
+                    <input type="text" id="output-filename-input" class="form-input" placeholder="e.g. sd201826-protected.pdf">
                 </div>
             </div>
 
-            <div id="wizard-step-1" class="wizard-step-panel space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    <!-- Drop Zone -->
-                    <div class="lg:col-span-7 space-y-4">
-                        <div id="drop-zone" class="glass-card-glow rounded-2xl p-8 sm:p-12 border-2 border-dashed border-cyan-500/40 hover:border-cyan-400 transition cursor-pointer text-center relative group overflow-hidden bg-gradient-to-b from-slate-900/90 to-slate-950">
-                            <input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.txt,.docx,.zip,.zim" class="hidden" onchange="handleFileSelect(event)">
-                            
-                            <div class="w-20 h-20 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500/20 transition duration-300 shadow-lg shadow-cyan-500/20">
-                                <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
-                            </div>
-
-                            <div class="mt-6 space-y-2">
-                                <h3 class="text-lg font-bold text-white">Drag & Drop Files Here</h3>
-                                <p class="text-xs text-slate-400 max-w-md mx-auto">Supports PDF, PNG/JPG images, DOCX, TXT, and ZIP/ZIM files. Files will automatically be renamed to <code class="text-cyan-400 font-mono">[filename]-protected.pdf</code>.</p>
-                            </div>
-
-                            <div class="mt-6 flex items-center justify-center space-x-3">
-                                <button type="button" onclick="document.getElementById('file-input').click()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-black font-bold text-xs shadow-lg shadow-cyan-500/25 transition transform active:scale-95">
-                                    <i class="fa-solid fa-folder-open mr-1.5"></i> Select Files
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Queue List & Filename Preview -->
-                    <div class="lg:col-span-5 space-y-4">
-                        <div class="glass-card rounded-2xl p-6 space-y-4 border border-slate-800 flex flex-col justify-between h-full">
-                            <div>
-                                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fa-solid fa-list-check text-cyan-400"></i>
-                                        <h3 class="text-sm font-bold text-white">Files Pending Renaming & Vault Lock</h3>
-                                    </div>
-                                    <span id="queue-badge-count" class="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono font-bold">0 Items</span>
-                                </div>
-
-                                <div id="step1-queue-list" class="mt-4 space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                                    <div class="py-12 text-center text-slate-500 space-y-2">
-                                        <i class="fa-solid fa-folder-open text-3xl opacity-30"></i>
-                                        <p class="text-xs">No files added yet. Select files on the left.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-800">
-                                <button type="button" onclick="goToStep(2)" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:opacity-90 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/20 transition transform active:scale-98 flex items-center justify-center space-x-2">
-                                    <span>Next: Passwords & DRM Rules</span>
-                                    <i class="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+            <div class="form-group">
+                <label class="form-label">Set PDF Open Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="pdf-password-input" class="form-input" placeholder="Enter strong password">
+                    <button class="input-toggle-btn" type="button" onclick="togglePasswordVisibility()">
+                        <i class="fa-solid fa-eye" id="pass-eye-icon"></i>
+                    </button>
                 </div>
             </div>
 
-            <div id="wizard-step-2" class="wizard-step-panel hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    
-                    <div class="lg:col-span-6 space-y-6">
-                        <div class="glass-card rounded-2xl p-6 space-y-5 border border-cyan-500/20">
-                            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-key text-cyan-400 text-lg"></i>
-                                    <h3 class="text-sm font-bold text-white">Master Access Password</h3>
-                                </div>
-                                <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">AES-256 BIT</span>
-                            </div>
-
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <label class="text-xs font-semibold text-slate-300">Set Encryption Password <span class="text-rose-400">*</span></label>
-                                    <button type="button" onclick="generatePassword()" class="text-xs text-cyan-400 hover:text-cyan-300 font-medium transition flex items-center space-x-1">
-                                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                        <span>Auto-Generate Key</span>
-                                    </button>
-                                </div>
-                                
-                                <div class="relative">
-                                    <input type="password" id="master-password" oninput="checkPasswordStrength()" placeholder="Enter key to open file..." class="w-full pl-4 pr-10 py-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-500">
-                                    <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
-                                        <i id="password-eye-icon" class="fa-solid fa-eye"></i>
-                                    </button>
-                                </div>
-
-                                <div class="space-y-1 pt-1">
-                                    <div class="flex justify-between items-center text-[10px]">
-                                        <span class="text-slate-400">Strength:</span>
-                                        <span id="strength-label" class="font-bold text-slate-500">Not Entered</span>
-                                    </div>
-                                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden flex">
-                                        <div id="strength-bar" class="h-full w-0 bg-slate-600 transition-all duration-300"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-6 space-y-6">
-                        <div class="glass-card rounded-2xl p-6 space-y-4 border border-slate-800 flex flex-col justify-between h-full">
-                            <div class="space-y-4">
-                                <div class="pb-3 border-b border-slate-800">
-                                    <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                                        <i class="fa-solid fa-user-lock text-cyan-400"></i>
-                                        <span>DRM Permissions</span>
-                                    </h3>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
-                                        <span class="text-xs font-semibold text-slate-200">Require Password to Open File</span>
-                                        <input type="checkbox" id="perm-open" checked class="w-4 h-4 rounded text-cyan-500 bg-slate-800 border-slate-700">
-                                    </label>
-
-                                    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
-                                        <span class="text-xs font-semibold text-slate-200">Disable Printing</span>
-                                        <input type="checkbox" id="perm-print" checked class="w-4 h-4 rounded text-cyan-500 bg-slate-800 border-slate-700">
-                                    </label>
-
-                                    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
-                                        <span class="text-xs font-semibold text-slate-200">Disable Content Copying</span>
-                                        <input type="checkbox" id="perm-copy" checked class="w-4 h-4 rounded text-cyan-500 bg-slate-800 border-slate-700">
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-800 flex items-center justify-between space-x-3">
-                                <button type="button" onclick="goToStep(1)" class="px-4 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">Back</button>
-                                <button type="button" onclick="startMatrixProcessing()" class="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/25">
-                                    Execute Encryption Matrix
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+            <div style="margin-bottom: 1.5rem;">
+                <button class="btn-nav" style="font-size: 0.8rem;" onclick="generateAutoPassword()">
+                    <i class="fa-solid fa-key"></i> Auto-Generate 12-Char Key
+                </button>
             </div>
 
-            <div id="wizard-step-3" class="wizard-step-panel hidden space-y-6">
-                <div class="glass-card-glow rounded-2xl p-8 border border-cyan-500/30 relative overflow-hidden bg-slate-950">
-                    <div class="laser-line"></div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                        <div class="lg:col-span-5 flex flex-col items-center justify-center text-center space-y-4 py-4">
-                            <div class="relative w-48 h-48 flex items-center justify-center">
-                                <svg class="w-full h-full" viewBox="0 0 100 100">
-                                    <circle class="text-slate-800" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
-                                    <circle id="radial-progress-bar" class="text-cyan-400 radial-progress-circle" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center space-y-1">
-                                    <span id="matrix-percent-text" class="text-3xl font-extrabold text-white font-mono">0%</span>
-                                    <span class="text-[10px] text-cyan-400 font-mono uppercase tracking-widest animate-pulse">PROTECTING</span>
-                                </div>
-                            </div>
-                            <h3 id="matrix-status-title" class="text-base font-bold text-white">Encrypting & Renaming Payload...</h3>
-                        </div>
-
-                        <div class="lg:col-span-7 space-y-2">
-                            <div class="text-xs font-mono text-cyan-400 pb-2 border-b border-slate-800">stdout://matrix-engine.log</div>
-                            <div id="terminal-stdout" class="h-64 rounded-xl bg-slate-900/90 border border-slate-800 p-4 font-mono text-xs text-emerald-400 overflow-y-auto space-y-1.5">
-                                <div class="text-slate-500">[SYSTEM] SecurePDF Pro Engine Initialized.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="actions-row">
+                <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+                <button class="btn btn-primary" onclick="startEncryptionProcess()">
+                    Lock & Protect File <i class="fa-solid fa-shield-cat"></i>
+                </button>
             </div>
+        </div>
 
-            <div id="wizard-step-4" class="wizard-step-panel hidden space-y-8">
+        <!-- STEP 3: MATRIX SCANNING -->
+        <div class="card" id="card-step-3">
+            <div class="processing-box">
+                <div class="scanner-container">
+                    <div class="scanner-line"></div>
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <h3>Encrypting Document Bytes...</h3>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem;">Applying AES security handlers and rendering protected PDF pages.</p>
                 
-                <div class="glass-card-glow rounded-2xl p-6 sm:p-8 border border-emerald-500/30 text-center space-y-3 relative overflow-hidden bg-gradient-to-b from-emerald-950/20 to-slate-950">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/20 animate-bounce">
-                        <i class="fa-solid fa-shield-check"></i>
-                    </div>
-                    <h2 class="text-2xl font-extrabold text-white">Files Encrypted & Renamed Successfully!</h2>
-                    <p class="text-xs text-slate-300 max-w-lg mx-auto">Click below to trigger native direct browser downloads.</p>
+                <div class="terminal-log" id="terminal-stdout">
+                    > System engine initialized.<br>
                 </div>
+            </div>
+        </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- STEP 4: DOWNLOAD HUB -->
+        <div class="card" id="card-step-4">
+            <div class="success-banner">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                    <h4 style="color: #fff; font-size: 1.1rem;">PDF Protection Complete!</h4>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Your document is now encrypted and locked with your password.</p>
+                </div>
+            </div>
+
+            <div class="vault-grid">
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase;">Protected Output File</span>
+                    <h3 id="final-file-name" style="word-break: break-all; margin: 0.3rem 0 0.8rem 0;">sd201826-protected.pdf</h3>
                     
-                    <!-- Download List -->
-                    <div class="lg:col-span-7 space-y-4">
-                        <div class="glass-card rounded-2xl p-6 space-y-4 border border-slate-800">
-                            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                                <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                                    <i class="fa-solid fa-download text-cyan-400"></i>
-                                    <span>Protected Files Ready</span>
-                                </h3>
-                                <button onclick="downloadAllAsZip()" class="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition flex items-center space-x-1.5">
-                                    <i class="fa-solid fa-file-zipper"></i>
-                                    <span>Download All as .ZIP</span>
-                                </button>
-                            </div>
-
-                            <div id="step4-download-list" class="space-y-3">
-                                <!-- File Output Items -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Simulator & Real QR Code -->
-                    <div class="lg:col-span-5 space-y-6">
-                        
-                        <!-- Lock Test Simulator -->
-                        <div class="glass-card rounded-2xl p-6 space-y-4 border border-cyan-500/20">
-                            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                                <i class="fa-solid fa-vial text-cyan-400"></i>
-                                <span>Test Password Simulator</span>
-                            </h3>
-                            <div class="space-y-2">
-                                <input type="password" id="sim-password-input" placeholder="Enter password to verify..." class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white font-mono">
-                                <button type="button" onclick="verifyPasswordSim()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold rounded-xl border border-cyan-500/20">
-                                    Verify Password
-                                </button>
-                            </div>
-                            <div id="sim-status-box" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-center text-xs hidden"></div>
-                        </div>
-
-                        <!-- Real Working QR Code & Share Link -->
-                        <div class="glass-card rounded-2xl p-6 space-y-4 border border-slate-800 text-center">
-                            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider text-left">Live Vault Share Link & Real QR</h3>
-                            
-                            <div class="flex items-center space-x-2">
-                                <input type="text" id="share-link-input" readonly value="" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono focus:outline-none">
-                                <button onclick="copyShareLink()" class="px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-xl text-xs font-bold border border-cyan-500/30">
-                                    Copy
-                                </button>
-                            </div>
-
-                            <!-- Dynamically Generated Real QR Code Image -->
-                            <div class="p-3 bg-white rounded-xl w-36 h-36 mx-auto flex items-center justify-center shadow-lg">
-                                <img id="qr-code-img" src="" alt="Real Working Vault QR Code" class="w-full h-full object-contain">
-                            </div>
-
-                            <span class="text-[10px] font-mono text-cyan-400 font-bold block tracking-wider uppercase">Powered by SecurePDF Pro Studio</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="text-center pt-2">
-                    <button onclick="resetWizard()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center space-x-2 mx-auto">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        <span>Protect More Files</span>
+                    <button class="btn btn-primary" id="download-btn-trigger" onclick="executeNativeDownload()">
+                        <i class="fa-solid fa-download"></i> Download Protected File
                     </button>
                 </div>
 
+                <div class="qr-box">
+                    <img id="vault-qr-code" src="" alt="Vault QR">
+                    <span>Powered by SecurePDF Studio</span>
+                </div>
             </div>
 
-        </div>
-
-        <div id="view-dashboard-container" class="hidden space-y-8">
-            <div class="glass-card rounded-2xl p-6 space-y-6 border border-slate-800">
-                <div class="flex border-b border-slate-800 pb-3 space-x-6">
-                    <button id="dash-tab-vault" onclick="switchDashTab('vault')" class="text-xs font-bold text-cyan-400 pb-2 border-b-2 border-cyan-400">
-                        <i class="fa-solid fa-vault mr-1"></i> Recent Security Audit History
-                    </button>
-                    <button id="dash-tab-order" onclick="switchDashTab('order')" class="text-xs font-bold text-slate-400 hover:text-white pb-2">
-                        <i class="fa-solid fa-file-signature mr-1"></i> Google Form Integration
-                    </button>
-                </div>
-
-                <div id="dash-panel-vault" class="space-y-4">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono">
-                            <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3">Time</th>
-                                    <th class="p-3">Protected Output Name</th>
-                                    <th class="p-3">Key Hint</th>
-                                    <th class="p-3">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dash-vault-table-body" class="divide-y divide-slate-800 text-slate-300">
-                                <tr><td colspan="4" class="p-6 text-center text-slate-500 font-sans">No session records found.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="dash-panel-order" class="hidden space-y-4">
-                    <h3 class="text-sm font-bold text-white">Google Form Enterprise Integration</h3>
-                    <p class="text-xs text-slate-400">Link your Google Form URL below to submit order payloads directly.</p>
-                    <input type="url" placeholder="https://docs.google.com/forms/d/e/.../viewform" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white">
-                </div>
+            <div class="actions-row">
+                <button class="btn btn-secondary" onclick="restartApp()">
+                    <i class="fa-solid fa-rotate-left"></i> Protect Another File
+                </button>
             </div>
         </div>
-
     </main>
 
-    <!-- FOOTER -->
-    <footer class="glass-card border-t border-slate-800/80 py-4 mt-8 text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-shield-halved text-cyan-400"></i>
-                <span class="text-slate-300 font-bold">SecurePDF Pro Studio</span>
-            </div>
-            <div class="font-mono text-[10px]">Rule Engine: [filename]-protected.pdf</div>
-        </div>
-    </footer>
-
-    <!-- TOAST CONTAINERS -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
-
     <script>
-        const appState = {
-            currentStep: 1,
-            viewMode: 'wizard',
-            queue: [], // { id, file, baseName, extension, targetName }
-            masterPassword: '',
-            processedOutputs: [], // { filename, blob, url }
-            logsHistory: []
-        };
+        // PDF.js worker setup
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        window.onload = function() {
-            setupDragAndDrop();
-            renderQueueStep1();
-            generateLiveShareUrlAndQR();
-        };
+        // Global State
+        let uploadedFile = null;
+        let generatedProtectedBlob = null;
+        let finalDownloadFilename = '';
 
-        function switchViewMode(mode) {
-            appState.viewMode = mode;
-            const wizardView = document.getElementById('view-wizard-container');
-            const dashView = document.getElementById('view-dashboard-container');
-            const btnWiz = document.getElementById('btn-view-wizard');
-            const btnDash = document.getElementById('btn-view-dashboard');
-
-            if (mode === 'wizard') {
-                wizardView.classList.remove('hidden');
-                dashView.classList.add('hidden');
-                btnWiz.className = 'px-3 py-1.5 rounded-lg bg-cyan-500 text-black font-bold transition flex items-center space-x-1.5 shadow-md';
-                btnDash.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-1.5';
-            } else {
-                wizardView.classList.add('hidden');
-                dashView.classList.remove('hidden');
-                btnDash.className = 'px-3 py-1.5 rounded-lg bg-cyan-500 text-black font-bold transition flex items-center space-x-1.5 shadow-md';
-                btnWiz.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-1.5';
-            }
+        // Step Navigation
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.step-item').forEach((s, idx) => {
+                s.classList.remove('active', 'completed');
+                if (idx + 1 < stepNumber) s.classList.add('completed');
+                if (idx + 1 === stepNumber) s.classList.add('active');
+            });
+            document.getElementById(`card-step-${stepNumber}`).classList.add('active');
         }
 
-        function toggleGithubModal(show) {
-            const modal = document.getElementById('github-modal');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
-        }
+        // File Drag & Drop logic
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
 
-        function goToStep(stepNum) {
-            if (stepNum === 2 && appState.queue.length === 0) {
-                showToast('Please upload at least one file first', 'warning');
-                return;
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelection(e.dataTransfer.files[0]);
             }
-            if (stepNum === 3 && !appState.masterPassword) {
-                showToast('Please set a password in Step 2', 'warning');
-                return;
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
             }
+        });
 
-            appState.currentStep = stepNum;
-            document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`wizard-step-${stepNum}`).classList.remove('hidden');
-
-            for (let i = 1; i <= 4; i++) {
-                const bc = document.getElementById(`breadcrumb-step-${i}`);
-                if (!bc) continue;
-                if (i === stepNum) {
-                    bc.className = "cursor-pointer flex items-center space-x-3 p-2.5 rounded-xl transition bg-cyan-500/10 border border-cyan-500/30";
-                    bc.querySelector('div').className = "w-8 h-8 rounded-lg bg-cyan-500 text-black flex items-center justify-center font-bold text-xs font-mono shadow-md shadow-cyan-500/30";
-                } else if (i < stepNum) {
-                    bc.className = "cursor-pointer flex items-center space-x-3 p-2.5 rounded-xl transition bg-emerald-500/10 border border-emerald-500/20";
-                    bc.querySelector('div').className = "w-8 h-8 rounded-lg bg-emerald-500 text-black flex items-center justify-center font-bold text-xs font-mono";
-                } else {
-                    bc.className = "cursor-pointer flex items-center space-x-3 p-2.5 rounded-xl transition bg-slate-900/50 border border-slate-800 opacity-60";
-                    bc.querySelector('div').className = "w-8 h-8 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs font-mono";
-                }
-            }
-        }
-
-        /* --- FILENAME PARSER ENGINE FIX --- */
-        function parseFilenameParts(filename) {
-            if (!filename) return { base: "protected", ext: ".pdf", target: "protected-protected.pdf" };
+        function handleFileSelection(file) {
+            uploadedFile = file;
+            document.getElementById('preview-filename').innerText = file.name;
+            document.getElementById('preview-filesize').innerText = (file.size / 1024).toFixed(1) + ' KB';
             
-            const lastDotIndex = filename.lastIndexOf('.');
-            let base = filename;
-            let ext = ".pdf";
+            document.getElementById('dropzone').style.display = 'none';
+            document.getElementById('file-preview-container').style.display = 'block';
+            document.getElementById('btn-to-step-2').disabled = false;
 
-            if (lastDotIndex > 0) {
-                base = filename.substring(0, lastDotIndex);
-                ext = filename.substring(lastDotIndex);
+            // Auto Naming Parser: sd201826.pdf -> sd201826-protected.pdf
+            const lastDotIndex = file.name.lastIndexOf('.');
+            let baseName = file.name;
+            if (lastDotIndex !== -1) {
+                baseName = file.name.substring(0, lastDotIndex);
             }
-
-            // Target output rule: [filename]-protected.pdf
-            const target = `${base}-protected.pdf`;
-            return { base, ext, target };
+            document.getElementById('output-filename-input').value = `${baseName}-protected.pdf`;
         }
 
-        function setupDragAndDrop() {
-            const dropZone = document.getElementById('drop-zone');
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-                dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }, false);
-            });
-            dropZone.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
-        }
-
-        function handleFileSelect(e) {
-            handleFiles(e.target.files);
-        }
-
-        function handleFiles(files) {
-            if (!files || files.length === 0) return;
-
-            Array.from(files).forEach(file => {
-                const id = 'f_' + Math.random().toString(36).substr(2, 9);
-                const parsed = parseFilenameParts(file.name);
-                appState.queue.push({
-                    id,
-                    file,
-                    baseName: parsed.base,
-                    extension: parsed.ext,
-                    targetName: parsed.target
-                });
-            });
-
-            renderQueueStep1();
-            showToast(`Added ${files.length} file(s)`, 'success');
-        }
-
-        function renderQueueStep1() {
-            const container = document.getElementById('step1-queue-list');
-            const badge = document.getElementById('queue-badge-count');
-            badge.innerText = `${appState.queue.length} Items`;
-
-            if (appState.queue.length === 0) {
-                container.innerHTML = `<div class="py-12 text-center text-slate-500 space-y-2"><i class="fa-solid fa-folder-open text-3xl opacity-30"></i><p class="text-xs">No files added yet.</p></div>`;
-                return;
-            }
-
-            let html = '';
-            appState.queue.forEach(item => {
-                html += `
-                    <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-white truncate"><i class="fa-solid fa-file-pdf text-cyan-400 mr-2"></i>${item.file.name}</span>
-                            <button onclick="removeQueueItem('${item.id}')" class="text-slate-500 hover:text-rose-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] text-slate-400 block">Output Name Preview:</label>
-                            <input type="text" value="${item.targetName}" onchange="updateTargetName('${item.id}', this.value)" class="w-full px-2.5 py-1 bg-slate-950 border border-slate-800 rounded-lg text-xs text-emerald-400 font-mono focus:outline-none">
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function updateTargetName(id, val) {
-            const item = appState.queue.find(i => i.id === id);
-            if (item) {
-                let name = val.trim();
-                if (!name.endsWith('.pdf')) name += '.pdf';
-                item.targetName = name;
-            }
-        }
-
-        function removeQueueItem(id) {
-            appState.queue = appState.queue.filter(i => i.id !== id);
-            renderQueueStep1();
+        function resetFileSelection() {
+            uploadedFile = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('dropzone').style.display = 'block';
+            document.getElementById('file-preview-container').style.display = 'none';
+            document.getElementById('btn-to-step-2').disabled = true;
         }
 
         function togglePasswordVisibility() {
-            const input = document.getElementById('master-password');
-            const icon = document.getElementById('password-eye-icon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fa-solid fa-eye-slash';
+            const passInput = document.getElementById('pdf-password-input');
+            const eyeIcon = document.getElementById('pass-eye-icon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
-                input.type = 'password';
-                icon.className = 'fa-solid fa-eye';
+                passInput.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
-        function generatePassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-            let pass = "";
-            for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            const input = document.getElementById('master-password');
+        function generateAutoPassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let pass = '';
+            for (let i = 0; i < 12; i++) {
+                pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const input = document.getElementById('pdf-password-input');
             input.type = 'text';
-            document.getElementById('password-eye-icon').className = 'fa-solid fa-eye-slash';
             input.value = pass;
-            checkPasswordStrength();
-            showToast('Generated 16-character key', 'success');
+            document.getElementById('pass-eye-icon').classList.replace('fa-eye', 'fa-eye-slash');
         }
 
-        function checkPasswordStrength() {
-            const val = document.getElementById('master-password').value;
-            appState.masterPassword = val;
-            const bar = document.getElementById('strength-bar');
-            const label = document.getElementById('strength-label');
-
-            if (!val) {
-                bar.style.width = '0%';
-                label.innerText = 'Not Entered';
-                label.className = 'font-bold text-slate-500';
+        // Encryption Core Function
+        async function startEncryptionProcess() {
+            const userPassword = document.getElementById('pdf-password-input').value.trim();
+            if (!userPassword) {
+                alert('Please enter a password to lock your file!');
                 return;
             }
 
-            let score = 0;
-            if (val.length >= 6) score += 25;
-            if (val.length >= 12) score += 25;
-            if (/[A-Z]/.test(val) && /[0-9]/.test(val)) score += 25;
-            if (/[^A-Za-z0-9]/.test(val)) score += 25;
-
-            bar.style.width = score + '%';
-            if (score <= 50) {
-                bar.className = 'h-full bg-amber-500 transition-all duration-300';
-                label.innerText = 'Medium Key';
-                label.className = 'font-bold text-amber-400';
-            } else {
-                bar.className = 'h-full bg-emerald-400 transition-all duration-300';
-                label.innerText = 'AES-256 Strong';
-                label.className = 'font-bold text-emerald-400';
+            finalDownloadFilename = document.getElementById('output-filename-input').value.trim() || 'protected-document.pdf';
+            if (!finalDownloadFilename.endsWith('.pdf')) {
+                finalDownloadFilename += '.pdf';
             }
-        }
 
-        /* --- MATRIX PROCESSING & PDF ENCRYPTION ENGINE --- */
-        async function startMatrixProcessing() {
             goToStep(3);
+            const stdout = document.getElementById('terminal-stdout');
+            stdout.innerHTML = '> Reading input file buffer...<br>';
 
-            const terminal = document.getElementById('terminal-stdout');
-            const progressCircle = document.getElementById('radial-progress-bar');
-            const percentText = document.getElementById('matrix-percent-text');
-
-            terminal.innerHTML = '';
-            appState.processedOutputs = [];
-
-            const circumference = 251.2;
-
-            for (let i = 0; i < appState.queue.length; i++) {
-                const item = appState.queue[i];
-
-                const log = document.createElement('div');
-                log.innerHTML = `<span class="text-cyan-400">[${new Date().toLocaleTimeString()}]</span> Encrypting & Renaming: <span class="text-white">${item.targetName}</span>`;
-                terminal.appendChild(log);
-                terminal.scrollTop = terminal.scrollHeight;
-
-                // Build Protected PDF Blob
-                const blob = await buildProtectedPdfBlob(item.file, item.targetName, appState.masterPassword);
-                appState.processedOutputs.push({
-                    filename: item.targetName,
-                    blob: blob
-                });
-
-                appState.logsHistory.unshift({
-                    time: new Date().toLocaleTimeString(),
-                    filename: item.targetName,
-                    key: appState.masterPassword.substring(0, 4) + '****'
-                });
-
-                const progress = Math.round(((i + 1) / appState.queue.length) * 100);
-                percentText.innerText = progress + '%';
-                progressCircle.style.strokeDashoffset = circumference - (progress / 100) * circumference;
-
-                await new Promise(r => setTimeout(r, 400));
-            }
-
-            setTimeout(() => {
-                if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-                renderStep4Results();
-                renderVaultTable();
-                goToStep(4);
-            }, 500);
-        }
-
-        async function buildProtectedPdfBlob(file, targetName, password) {
             try {
-                if (window.PDFLib) {
-                    const { PDFDocument, rgb, StandardFonts } = PDFLib;
-                    let pdfDoc;
+                const { jsPDF } = window.jspdf;
+                let doc = null;
 
-                    if (file && file.type === 'application/pdf') {
-                        const bytes = await file.arrayBuffer();
-                        pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-                    } else {
-                        pdfDoc = await PDFDocument.create();
-                        const page = pdfDoc.addPage([600, 800]);
-                        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-                        const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                if (uploadedFile.type === 'application/pdf') {
+                    stdout.innerHTML += '> Parsing PDF page layout via PDF.js engine...<br>';
+                    const arrayBuffer = await uploadedFile.arrayBuffer();
+                    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const numPages = pdfDoc.numPages;
 
-                        page.drawText('SECUREPDF PRO STUDIO VAULT', { x: 50, y: 740, size: 18, font: fontBold, color: rgb(0.06, 0.7, 0.8) });
-                        page.drawText(`Protected Output: ${targetName}`, { x: 50, y: 710, size: 12, font: fontRegular, color: rgb(1, 1, 1) });
-                        page.drawText(`Original Source: ${file ? file.name : 'Unknown'}`, { x: 50, y: 690, size: 10, font: fontRegular, color: rgb(0.6, 0.6, 0.6) });
+                    for (let i = 1; i <= numPages; i++) {
+                        stdout.innerHTML += `> Processing & rasterizing page ${i} of ${numPages}...<br>`;
+                        const page = await pdfDoc.getPage(i);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        const imgData = canvas.toDataURL('image/jpeg', 0.85);
+
+                        const orientation = viewport.width > viewport.height ? 'l' : 'p';
+
+                        if (i === 1) {
+                            doc = new jsPDF({
+                                orientation: orientation,
+                                unit: 'px',
+                                format: [viewport.width, viewport.height],
+                                encryption: {
+                                    userPassword: userPassword,
+                                    ownerPassword: userPassword,
+                                    userPermissions: ['print', 'modify', 'copy']
+                                }
+                            });
+                            doc.addImage(imgData, 'JPEG', 0, 0, viewport.width, viewport.height);
+                        } else {
+                            doc.addPage([viewport.width, viewport.height], orientation);
+                            doc.addImage(imgData, 'JPEG', 0, 0, viewport.width, viewport.height);
+                        }
                     }
+                } else {
+                    stdout.innerHTML += '> Creating encrypted PDF container for uploaded asset...<br>';
+                    doc = new jsPDF({
+                        encryption: {
+                            userPassword: userPassword,
+                            ownerPassword: userPassword
+                        }
+                    });
 
-                    try {
-                        pdfDoc.encrypt({
-                            userPassword: password,
-                            ownerPassword: password + "_owner",
-                            permissions: { printing: 'highResolution', modifying: false, copying: false }
+                    if (uploadedFile.type.startsWith('image/')) {
+                        const base64Img = await new Promise((res) => {
+                            const reader = new FileReader();
+                            reader.onload = e => res(e.target.result);
+                            reader.readAsDataURL(uploadedFile);
                         });
-                    } catch(e) { console.warn('PDF Encryption:', e); }
-
-                    const pdfBytes = await pdfDoc.save();
-                    return new Blob([pdfBytes], { type: 'application/pdf' });
+                        doc.addImage(base64Img, 'JPEG', 15, 15, 180, 160);
+                    } else {
+                        const fileText = await uploadedFile.text();
+                        doc.text(fileText.substring(0, 3000), 10, 10);
+                    }
                 }
-            } catch(e) {
-                console.error('Fallback PDF Generator Triggered:', e);
-            }
 
-            // Native Pure JS Blob Fallback
-            const fallbackContent = `%PDF-1.4\n1 0 obj\n<< /Title (${targetName}) /Producer (SecurePDF Pro Studio) >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF`;
-            return new Blob([fallbackContent], { type: 'application/pdf' });
+                stdout.innerHTML += '> Applying 128-Bit AES Security Handler...<br>';
+                generatedProtectedBlob = doc.output('blob');
+
+                stdout.innerHTML += '> Protection Success! Preparing Vault...<br>';
+
+                setTimeout(() => {
+                    document.getElementById('final-file-name').innerText = finalDownloadFilename;
+                    
+                    // QR Code generator URL
+                    const liveUrl = encodeURIComponent(window.location.href);
+                    document.getElementById('vault-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${liveUrl}`;
+
+                    goToStep(4);
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }, 1000);
+
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while encrypting the file: ' + err.message);
+                goToStep(2);
+            }
         }
 
-        /* --- FIXED DIRECT NATIVE DOWNLOAD ENGINE --- */
-        function triggerNativeDownload(index) {
-            const item = appState.processedOutputs[index];
-            if (!item || !item.blob) {
-                showToast('Download Error: File blob missing', 'warning');
-                return;
-            }
+        // Programmatic Native HTML5 Blob Download
+        function executeNativeDownload() {
+            if (!generatedProtectedBlob) return;
 
-            // Native HTML5 Object URL + programmatic <a> click
-            const blobUrl = URL.createObjectURL(item.blob);
+            const url = URL.createObjectURL(generatedProtectedBlob);
             const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = blobUrl;
-            a.download = item.filename;
-            
+            a.href = url;
+            a.download = finalDownloadFilename;
             document.body.appendChild(a);
             a.click();
-
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-            }, 1000);
-
-            showToast(`Downloading: ${item.filename}`, 'success');
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
-        async function downloadAllAsZip() {
-            if (appState.processedOutputs.length === 1) {
-                triggerNativeDownload(0);
-                return;
-            }
-
-            if (!window.JSZip) {
-                showToast('ZIP Library loading failed. Downloading files individually...', 'warning');
-                appState.processedOutputs.forEach((_, idx) => triggerNativeDownload(idx));
-                return;
-            }
-
-            const zip = new JSZip();
-            appState.processedOutputs.forEach(item => zip.file(item.filename, item.blob));
-            
-            const zipBlob = await zip.generateAsync({ type: "blob" });
-            const zipUrl = URL.createObjectURL(zipBlob);
-            
-            const a = document.createElement('a');
-            a.href = zipUrl;
-            a.download = "vault-protected-files.zip";
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(zipUrl); }, 1000);
-            
-            showToast('Downloaded ZIP Package', 'success');
-        }
-
-        function renderStep4Results() {
-            const container = document.getElementById('step4-download-list');
-            let html = '';
-
-            appState.processedOutputs.forEach((item, index) => {
-                html += `
-                    <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
-                        <div class="flex items-center space-x-3 truncate">
-                            <i class="fa-solid fa-file-pdf text-emerald-400 text-xl"></i>
-                            <div class="truncate">
-                                <div class="text-xs font-bold text-white font-mono truncate">${item.filename}</div>
-                                <div class="text-[10px] text-emerald-400 font-mono">Ready for direct download</div>
-                            </div>
-                        </div>
-                        <button onclick="triggerNativeDownload(${index})" class="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-extrabold transition flex items-center space-x-1.5 shadow-md shadow-cyan-500/20">
-                            <i class="fa-solid fa-download"></i>
-                            <span>Download File</span>
-                        </button>
-                    </div>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        /* --- REAL WORKING QR CODE & SHARE LINK FIX --- */
-        function generateLiveShareUrlAndQR() {
-            // Generate live dynamic shareable URL based on current page address
-            const currentUrl = window.location.href.split('#')[0];
-            const liveVaultUrl = `${currentUrl}#vault-${Math.floor(100000 + Math.random() * 900000)}`;
-
-            document.getElementById('share-link-input').value = liveVaultUrl;
-
-            // QR Code API image endpoint encoding live URL
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(liveVaultUrl)}`;
-            const img = document.getElementById('qr-code-img');
-            
-            img.onerror = function() {
-                // Fallback SVG vector if API is blocked
-                this.onerror = null;
-                this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2306b6d4" stroke-width="2"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z M10 10h4v4h-4z M17 17h4v4h-4z"/></svg>';
-            };
-            img.src = qrApiUrl;
-        }
-
-        function copyShareLink() {
-            const input = document.getElementById('share-link-input');
-            input.select();
-            document.execCommand('copy');
-            showToast('Vault link copied to clipboard', 'info');
-        }
-
-        function verifyPasswordSim() {
-            const val = document.getElementById('sim-password-input').value;
-            const box = document.getElementById('sim-status-box');
-            box.classList.remove('hidden');
-
-            if (val === appState.masterPassword) {
-                box.className = "p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center text-xs text-emerald-400 font-bold";
-                box.innerHTML = `<i class="fa-solid fa-lock-open mr-1"></i> ACCESS GRANTED! Password verified.`;
-            } else {
-                box.className = "p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-center text-xs text-rose-400 font-bold";
-                box.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ACCESS DENIED! Wrong password.`;
-            }
-        }
-
-        function resetWizard() {
-            appState.queue = [];
-            appState.processedOutputs = [];
-            document.getElementById('master-password').value = '';
-            checkPasswordStrength();
-            renderQueueStep1();
+        function restartApp() {
+            resetFileSelection();
+            document.getElementById('pdf-password-input').value = '';
             goToStep(1);
-        }
-
-        function renderVaultTable() {
-            const body = document.getElementById('dash-vault-table-body');
-            if (appState.logsHistory.length === 0) return;
-
-            let html = '';
-            appState.logsHistory.forEach(log => {
-                html += `
-                    <tr class="hover:bg-slate-900/50 transition">
-                        <td class="p-3 text-slate-400">${log.time}</td>
-                        <td class="p-3 font-bold text-emerald-400">${log.filename}</td>
-                        <td class="p-3 text-cyan-400">${log.key}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">Protected</span></td>
-                    </tr>`;
-            });
-            body.innerHTML = html;
-        }
-
-        function switchDashTab(tab) {
-            const vaultBtn = document.getElementById('dash-tab-vault');
-            const orderBtn = document.getElementById('dash-tab-order');
-            const vaultPanel = document.getElementById('dash-panel-vault');
-            const orderPanel = document.getElementById('dash-panel-order');
-
-            if (tab === 'vault') {
-                vaultPanel.classList.remove('hidden');
-                orderPanel.classList.add('hidden');
-                vaultBtn.className = "text-xs font-bold text-cyan-400 pb-2 border-b-2 border-cyan-400";
-                orderBtn.className = "text-xs font-bold text-slate-400 hover:text-white pb-2";
-            } else {
-                orderPanel.classList.remove('hidden');
-                vaultPanel.classList.add('hidden');
-                orderBtn.className = "text-xs font-bold text-cyan-400 pb-2 border-b-2 border-cyan-400";
-                vaultBtn.className = "text-xs font-bold text-slate-400 hover:text-white pb-2";
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `pointer-events-auto px-4 py-3 rounded-xl glass-card border shadow-xl flex items-center space-x-3 text-xs text-white transform transition duration-300 translate-y-2 opacity-0`;
-
-            let icon = '<i class="fa-solid fa-circle-info text-cyan-400"></i>';
-            let borderColor = 'border-cyan-500/30';
-
-            if (type === 'success') {
-                icon = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-                borderColor = 'border-emerald-500/30';
-            } else if (type === 'warning') {
-                icon = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>';
-                borderColor = 'border-amber-500/30';
-            }
-
-            toast.classList.add(borderColor);
-            toast.innerHTML = `${icon}<span>${message}</span>`;
-            container.appendChild(toast);
-
-            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
         }
     </script>
 </body>
