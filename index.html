@@ -63,61 +63,31 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .logo i {
-            color: var(--accent-cyan);
-            font-size: 1.5rem;
-            -webkit-text-fill-color: initial;
-        }
+        .logo i { color: var(--accent-cyan); font-size: 1.5rem; -webkit-text-fill-color: initial; }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+        .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
 
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.85rem 1rem;
-            border-radius: 8px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem;
+            border-radius: 8px; color: var(--text-muted); text-decoration: none;
+            font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: var(--bg-card-hover);
-            color: var(--text-main);
-        }
-
-        .nav-item.active {
-            border-left: 3px solid var(--accent-cyan);
-            background: rgba(6, 182, 212, 0.1);
-        }
-
+        .nav-item:hover, .nav-item.active { background: var(--bg-card-hover); color: var(--text-main); }
+        .nav-item.active { border-left: 3px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.1); }
         .nav-item i { width: 20px; text-align: center; }
 
         /* Main Content */
         .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 2.5rem 5%;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
+            margin-left: 260px; flex: 1; padding: 2.5rem 5%;
+            background-image: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
         }
 
         .section-view { display: none; animation: fadeIn 0.3s ease; }
         .section-view.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .page-header { margin-bottom: 2rem; }
         .page-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
@@ -125,10 +95,8 @@
 
         /* Vault Table */
         .vault-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 12px; overflow: hidden;
         }
 
         table { width: 100%; border-collapse: collapse; }
@@ -137,12 +105,7 @@
         td { font-size: 0.95rem; }
         tr:hover { background: rgba(255,255,255,0.02); }
 
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
+        .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
         .badge-locked { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
         .badge-unlocked { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
 
@@ -152,25 +115,15 @@
 
         .password-reveal { display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; }
 
-        /* Cards & Forms (Reused from Wizard) */
+        /* Cards & Dropzone */
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 2rem;
-            max-width: 800px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 2rem; max-width: 800px;
         }
 
         .dropzone {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            text-align: center;
-            background: rgba(255,255,255,0.01);
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border: 2px dashed var(--border-color); border-radius: 12px; padding: 3rem 2rem;
+            text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; transition: all 0.3s ease;
         }
         .dropzone:hover { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.03); }
         .dropzone i { font-size: 3rem; color: var(--accent-cyan); margin-bottom: 1rem; }
@@ -206,9 +159,27 @@
 
         .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+        /* Toast Notification System */
+        #toast {
+            visibility: hidden; min-width: 280px; background-color: var(--bg-card-hover);
+            color: #fff; text-align: center; border-radius: 8px; padding: 16px;
+            position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%);
+            border: 1px solid var(--accent-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; justify-content: center;
+        }
+        #toast.show { visibility: visible; animation: toastFadeIn 0.4s, toastFadeOut 0.4s 3.5s forwards; }
+        #toast.toast-danger { border-color: var(--accent-red); color: var(--accent-red); }
+        #toast.toast-success { border-color: var(--accent-green); color: var(--accent-green); }
+
+        @keyframes toastFadeIn { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes toastFadeOut { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body>
+
+    <!-- Notification Toast -->
+    <div id="toast"><i class="fa-solid fa-circle-info"></i> <span id="toast-msg">Notification</span></div>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -235,7 +206,7 @@
         <div id="view-dashboard" class="section-view active">
             <div class="page-header">
                 <h1 class="page-title">Security Vault</h1>
-                <p class="page-desc">Manage your previously protected and unlocked files. Passwords are saved locally.</p>
+                <p class="page-desc">Manage your previously protected and unlocked files. Automatically synced to Local Storage.</p>
             </div>
 
             <div class="vault-container">
@@ -286,7 +257,7 @@
                 </div>
 
                 <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="runProtect()">
-                    <i class="fa-solid fa-lock"></i> Encrypt & Download
+                    <i class="fa-solid fa-lock"></i> Encrypt & Auto-Save
                 </button>
 
                 <div class="terminal-log" id="protect-log" style="display: none;"></div>
@@ -318,7 +289,7 @@
                 </div>
 
                 <button class="btn btn-danger" style="width: 100%; justify-content: center;" onclick="runUnprotect()">
-                    <i class="fa-solid fa-fire"></i> Strip Security & Download
+                    <i class="fa-solid fa-fire"></i> Strip Security & Auto-Save
                 </button>
 
                 <div class="terminal-log" id="unprotect-log" style="display: none;"></div>
@@ -329,6 +300,24 @@
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // --- TOAST NOTIFICATION SYSTEM ---
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById("toast");
+            const msgEl = document.getElementById("toast-msg");
+            
+            toast.className = ""; // Reset
+            msgEl.innerHTML = message;
+            
+            if (type === 'danger') {
+                toast.classList.add('toast-danger');
+            } else {
+                toast.classList.add('toast-success');
+            }
+            
+            toast.classList.add("show");
+            setTimeout(() => { toast.classList.remove("show"); }, 3800);
+        }
 
         // --- NAVIGATION LOGIC ---
         function switchTab(tabId) {
@@ -341,7 +330,7 @@
             if(tabId === 'dashboard') renderVault();
         }
 
-        // --- VAULT LOCALSTORAGE LOGIC ---
+        // --- VAULT LOCALSTORAGE AUTO-SAVE LOGIC ---
         let vaultData = JSON.parse(localStorage.getItem('secureVault')) || [];
 
         function saveToVault(filename, type, password) {
@@ -353,13 +342,24 @@
                 date: new Date().toLocaleDateString()
             };
             vaultData.push(entry);
+            
+            // Automatic Save to Local Storage
             localStorage.setItem('secureVault', JSON.stringify(vaultData));
+            showToast("<i class='fa-solid fa-floppy-disk'></i> Auto-saved to Local Storage", 'success');
         }
 
         function deleteVaultEntry(id) {
-            vaultData = vaultData.filter(item => item.id !== id);
-            localStorage.setItem('secureVault', JSON.stringify(vaultData));
-            renderVault();
+            if (confirm("Are you sure you want to permanently delete this file record and its password from local storage?")) {
+                // Permanently remove from array
+                vaultData = vaultData.filter(item => item.id !== id);
+                
+                // Update Local Storage
+                localStorage.setItem('secureVault', JSON.stringify(vaultData));
+                renderVault();
+                
+                // Show secure deletion toast
+                showToast("<i class='fa-solid fa-trash-can'></i> Password & record permanently removed", 'danger');
+            }
         }
 
         function togglePassword(id) {
@@ -385,7 +385,7 @@
                     <div class="empty-state">
                         <i class="fa-solid fa-box-open"></i>
                         <h3>Your Vault is Empty</h3>
-                        <p>Protected and unlocked files will appear here.</p>
+                        <p>Protected and unlocked files will automatically save here.</p>
                     </div>
                 </td></tr>`;
                 return;
@@ -410,7 +410,7 @@
                         <td>${passHtml}</td>
                         <td>${item.date}</td>
                         <td>
-                            <button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Delete Record & Password">
+                            <button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Permanently Delete Password">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -477,7 +477,6 @@
                         }
                     }
                 } else {
-                    // Fallback for images
                     doc = new jsPDF({ encryption: { userPassword: pass, ownerPassword: pass } });
                     const b64 = await new Promise(r => { const f = new FileReader(); f.onload=e=>r(e.target.result); f.readAsDataURL(pFile); });
                     doc.addImage(b64, 'JPEG', 10, 10, 190, 0);
@@ -526,7 +525,6 @@
             try {
                 const arr = await uFile.arrayBuffer();
                 
-                // Attempt to open PDF with password
                 const pdf = await pdfjsLib.getDocument({ data: arr, password: pass }).promise;
                 
                 log.innerHTML += '> Password Accepted! Removing encryption...<br>';
@@ -543,7 +541,6 @@
                     const img = canvas.toDataURL('image/jpeg', 0.85);
 
                     const orient = vp.width > vp.height ? 'l' : 'p';
-                    // Note: NO encryption object passed this time!
                     if(i===1) {
                         doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height] });
                         doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
@@ -555,8 +552,8 @@
 
                 let outname = uFile.name.replace('.pdf', '-unlocked.pdf');
                 
-                log.innerHTML += '> Security Stripped. Saving to Vault...<br>';
-                saveToVault(outname, 'unlocked', pass); // Save history of unlocked file
+                log.innerHTML += '> Security Stripped. Auto-Saving to Vault...<br>';
+                saveToVault(outname, 'unlocked', pass);
                 
                 log.innerHTML += '> Success! Downloading unlocked PDF...<br>';
                 doc.save(outname);
@@ -567,6 +564,7 @@
             } catch(e) {
                 if(e.name === 'PasswordException') {
                     log.innerHTML += `<span style="color:var(--accent-red)">> ACCESS DENIED: Incorrect Password.</span><br>`;
+                    showToast("Access Denied: Incorrect Password", 'danger');
                 } else {
                     log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`;
                 }
