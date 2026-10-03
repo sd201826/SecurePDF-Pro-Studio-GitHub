@@ -92,34 +92,23 @@
         .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: 0.2s; }
         .action-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .action-btn.delete:hover { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .action-btn.unlock-btn:hover { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
 
         .password-reveal { display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; }
 
         /* Cards & Form */
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
-            padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 2rem; max-width: 800px;
-        }
-        .dropzone {
-            border: 2px dashed var(--border-color); border-radius: 12px; padding: 3rem 2rem;
-            text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; transition: all 0.3s ease;
-        }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 2rem; max-width: 800px; }
+        .dropzone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 3rem 2rem; text-align: center; background: rgba(255,255,255,0.01); cursor: pointer; transition: all 0.3s ease; }
         .dropzone:hover { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.03); }
         .dropzone i { font-size: 3rem; color: var(--accent-cyan); margin-bottom: 1rem; }
         .file-input { display: none; }
 
         .form-group { margin-bottom: 1.5rem; text-align: left; }
         .form-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .form-input {
-            width: 100%; background: var(--bg-dark); border: 1px solid var(--border-color);
-            padding: 0.85rem 1rem; border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none;
-        }
+        .form-input { width: 100%; background: var(--bg-dark); border: 1px solid var(--border-color); padding: 0.85rem 1rem; border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
         .form-input:focus { border-color: var(--accent-cyan); }
 
-        .btn {
-            padding: 0.85rem 1.75rem; border-radius: 8px; font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; border: none; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.6rem; justify-content: center;
-        }
+        .btn { padding: 0.85rem 1.75rem; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; border: none; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.6rem; justify-content: center; }
         .btn-primary { background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%); color: #fff; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--glow-color); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
@@ -133,11 +122,7 @@
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
 
         /* Toast Notification */
-        #toast {
-            visibility: hidden; min-width: 280px; background-color: var(--bg-card-hover); color: #fff; text-align: center; border-radius: 8px; padding: 16px;
-            position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%);
-            border: 1px solid var(--accent-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.6); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; justify-content: center;
-        }
+        #toast { visibility: hidden; min-width: 280px; background-color: var(--bg-card-hover); color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); border: 1px solid var(--accent-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.6); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; justify-content: center; }
         #toast.show { visibility: visible; animation: toastFadeIn 0.4s, toastFadeOut 0.4s 3.5s forwards; }
         #toast.toast-danger { border-color: var(--accent-red); color: var(--accent-red); }
         #toast.toast-success { border-color: var(--accent-green); color: var(--accent-green); }
@@ -148,16 +133,15 @@
 </head>
 <body>
 
-    <!-- Notification Toast -->
     <div id="toast"><i class="fa-solid fa-circle-info"></i> <span id="toast-msg">Notification</span></div>
 
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo"><i class="fa-solid fa-shield-halved"></i> SecurePDF</div>
         <div class="nav-menu">
-            <a class="nav-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-vault"></i> Dashboard Vault</a>
-            <a class="nav-item" onclick="switchTab('protect')"><i class="fa-solid fa-lock"></i> Protect PDF</a>
-            <a class="nav-item" onclick="switchTab('unprotect')"><i class="fa-solid fa-unlock"></i> Unprotect PDF</a>
+            <a class="nav-item active" onclick="switchTab('dashboard')" id="tab-dashboard"><i class="fa-solid fa-vault"></i> Dashboard Vault</a>
+            <a class="nav-item" onclick="switchTab('protect')" id="tab-protect"><i class="fa-solid fa-lock"></i> Protect PDF</a>
+            <a class="nav-item" onclick="switchTab('unprotect')" id="tab-unprotect"><i class="fa-solid fa-unlock"></i> Unprotect PDF</a>
         </div>
     </div>
 
@@ -167,29 +151,22 @@
         <!-- DASHBOARD VAULT VIEW -->
         <div id="view-dashboard" class="section-view active">
             
-            <!-- 1. Master Key Setup Screen -->
             <div id="setup-screen" class="auth-container" style="display: none;">
                 <i class="fa-solid fa-key"></i>
                 <h2>Create Master Password</h2>
-                <p>You must set a master password to secure your Vault. Don't forget it!</p>
-                <div class="form-group">
-                    <input type="password" id="setup-pass" class="form-input" placeholder="Create your master password" autocomplete="new-password">
-                </div>
+                <p>You must set a master password to secure your Vault.</p>
+                <div class="form-group"><input type="password" id="setup-pass" class="form-input" placeholder="Create your master password" autocomplete="new-password"></div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="setupMasterKey()">Secure My Vault</button>
             </div>
 
-            <!-- 2. Master Key Unlock Screen -->
             <div id="lock-screen" class="auth-container" style="display: none;">
                 <i class="fa-solid fa-lock"></i>
                 <h2>Vault Locked</h2>
                 <p>Enter your Master Password to access your saved files.</p>
-                <div class="form-group">
-                    <input type="password" id="login-pass" class="form-input" placeholder="Enter master password" autocomplete="new-password">
-                </div>
+                <div class="form-group"><input type="password" id="login-pass" class="form-input" placeholder="Enter master password" autocomplete="new-password"></div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="unlockVault()">Unlock Vault</button>
             </div>
 
-            <!-- 3. Actual Vault Content (Hidden until unlocked) -->
             <div id="vault-content" style="display: none;">
                 <div class="page-header">
                     <div>
@@ -224,7 +201,6 @@
 
                 <div class="form-group" style="margin-top: 1.5rem;">
                     <label class="form-label">Set Password</label>
-                    <!-- IMPORTANT FIX: autocomplete="new-password" stops browser from saving this -->
                     <input type="text" id="protect-pass" class="form-input" placeholder="Enter secure password" autocomplete="new-password">
                 </div>
                 <div class="form-group">
@@ -250,7 +226,6 @@
 
                 <div class="form-group" style="margin-top: 1.5rem;">
                     <label class="form-label">Current PDF Password</label>
-                    <!-- IMPORTANT FIX: autocomplete="new-password" stops browser from saving this -->
                     <input type="text" id="unprotect-pass" class="form-input" placeholder="Enter password to unlock" autocomplete="new-password">
                 </div>
                 <button class="btn btn-danger" style="width: 100%;" onclick="runUnprotect()"><i class="fa-solid fa-fire"></i> Strip Security & Auto-Save</button>
@@ -276,8 +251,10 @@
         function switchTab(tabId) {
             document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
             document.getElementById(`view-${tabId}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
             if(tabId === 'dashboard') manageVaultState();
         }
 
@@ -303,13 +280,8 @@
         function setupMasterKey() {
             const pass = document.getElementById('setup-pass').value;
             if (!pass) return alert("Please type a master password.");
-            
-            // Simple encoding to hide it from plain sight
-            masterKey = btoa(pass); 
-            localStorage.setItem('securePDFMasterKey', masterKey);
-            vaultUnlocked = true;
-            document.getElementById('setup-pass').value = '';
-            
+            masterKey = btoa(pass); localStorage.setItem('securePDFMasterKey', masterKey);
+            vaultUnlocked = true; document.getElementById('setup-pass').value = '';
             showToast("<i class='fa-solid fa-shield'></i> Master Password Secured!", "success");
             manageVaultState();
         }
@@ -317,23 +289,16 @@
         function unlockVault() {
             const pass = document.getElementById('login-pass').value;
             if (btoa(pass) === masterKey) {
-                vaultUnlocked = true;
-                document.getElementById('login-pass').value = '';
+                vaultUnlocked = true; document.getElementById('login-pass').value = '';
                 showToast("<i class='fa-solid fa-unlock'></i> Vault Unlocked", "success");
                 manageVaultState();
             } else {
                 showToast("<i class='fa-solid fa-triangle-exclamation'></i> Incorrect Master Password", "danger");
-                document.getElementById('login-pass').value = ''; // Wipe immediately
+                document.getElementById('login-pass').value = '';
             }
         }
 
-        function lockVault() {
-            vaultUnlocked = false;
-            showToast("<i class='fa-solid fa-lock'></i> Vault Locked", "success");
-            manageVaultState();
-        }
-
-        // Run on page load
+        function lockVault() { vaultUnlocked = false; showToast("<i class='fa-solid fa-lock'></i> Vault Locked", "success"); manageVaultState(); }
         manageVaultState();
 
         // --- VAULT LOCALSTORAGE LOGIC ---
@@ -341,87 +306,72 @@
 
         function saveToVault(filename, type, password) {
             const entry = { id: Date.now(), filename: filename, type: type, password: password, date: new Date().toLocaleDateString() };
-            vaultData.push(entry);
-            localStorage.setItem('secureVault', JSON.stringify(vaultData));
+            vaultData.push(entry); localStorage.setItem('secureVault', JSON.stringify(vaultData));
             showToast("<i class='fa-solid fa-floppy-disk'></i> Auto-saved to Local Storage", 'success');
         }
 
         function deleteVaultEntry(id) {
-            if (confirm("Are you absolutely sure? This will PERMANENTLY wipe the password from the system.")) {
-                // Delete from Array
+            if (confirm("Permanently delete this record and password from the Vault? (Note: To unprotect the actual PDF on your PC, use the Quick Unlock button first)")) {
                 vaultData = vaultData.filter(item => item.id !== id);
                 localStorage.setItem('secureVault', JSON.stringify(vaultData));
-                
-                // Force wipe inputs just in case
-                document.getElementById('protect-pass').value = '';
-                document.getElementById('unprotect-pass').value = '';
-                
+                document.getElementById('protect-pass').value = ''; document.getElementById('unprotect-pass').value = '';
                 renderVault();
                 showToast("<i class='fa-solid fa-trash-can'></i> Password permanently wiped", 'danger');
             }
         }
 
+        function quickUnlockSend(password) {
+            switchTab('unprotect');
+            document.getElementById('unprotect-pass').value = password;
+            showToast("<i class='fa-solid fa-key'></i> Password sent! Just upload the file.", 'success');
+        }
+
         function togglePassword(id) {
             const span = document.getElementById(`pass-${id}`);
             const icon = document.getElementById(`icon-${id}`);
-            if (span.dataset.hidden === "true") {
-                span.innerText = span.dataset.pass;
-                span.dataset.hidden = "false";
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                span.innerText = "••••••••";
-                span.dataset.hidden = "true";
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
+            if (span.dataset.hidden === "true") { span.innerText = span.dataset.pass; span.dataset.hidden = "false"; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
+            else { span.innerText = "••••••••"; span.dataset.hidden = "true"; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
         }
 
         function renderVault() {
             const tbody = document.getElementById('vault-table-body');
             tbody.innerHTML = '';
-            if (vaultData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>Your Vault is Empty</h3><p>Protected and unlocked files will automatically save here.</p></div></td></tr>`;
-                return;
-            }
+            if (vaultData.length === 0) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>Your Vault is Empty</h3><p>Protected and unlocked files will automatically save here.</p></div></td></tr>`; return; }
 
             vaultData.slice().reverse().forEach(item => {
                 const badge = item.type === 'locked' ? `<span class="badge badge-locked">LOCKED</span>` : `<span class="badge badge-unlocked">UNLOCKED</span>`;
                 const passHtml = item.password ? `<div class="password-reveal"><span id="pass-${item.id}" data-pass="${item.password}" data-hidden="true">••••••••</span><button class="action-btn" onclick="togglePassword(${item.id})"><i id="icon-${item.id}" class="fa-solid fa-eye"></i></button></div>` : `<span style="color:var(--text-muted)">N/A</span>`;
-                tbody.innerHTML += `<tr><td style="font-weight: 600;">${item.filename}</td><td>${badge}</td><td>${passHtml}</td><td>${item.date}</td><td><button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Permanently Wipe File"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                
+                // New Quick Unlock Button added here!
+                const actionButtons = `
+                    <div style="display:flex; gap:0.5rem;">
+                        ${item.type === 'locked' ? `<button class="action-btn unlock-btn" onclick="quickUnlockSend('${item.password}')" title="Quick Unlock File"><i class="fa-solid fa-unlock"></i></button>` : ''}
+                        <button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Delete Record from Vault"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                tbody.innerHTML += `<tr><td style="font-weight: 600;">${item.filename}</td><td>${badge}</td><td>${passHtml}</td><td>${item.date}</td><td>${actionButtons}</td></tr>`;
             });
         }
 
         // --- PROTECT WIPE FUNCTION ---
         function resetProtect() {
-            pFile = null;
-            document.getElementById('protect-file').value = '';
-            document.getElementById('protect-dropzone').style.display = 'block';
-            document.getElementById('protect-preview').style.display = 'none';
-            document.getElementById('protect-log').style.display = 'none';
-            document.getElementById('protect-pass').value = '';
-            document.getElementById('protect-outname').value = '';
+            pFile = null; document.getElementById('protect-file').value = ''; document.getElementById('protect-dropzone').style.display = 'block';
+            document.getElementById('protect-preview').style.display = 'none'; document.getElementById('protect-log').style.display = 'none';
+            document.getElementById('protect-pass').value = ''; document.getElementById('protect-outname').value = '';
         }
 
         // --- UNPROTECT WIPE FUNCTION ---
         function resetUnprotect() {
-            uFile = null;
-            document.getElementById('unprotect-file').value = '';
-            document.getElementById('unprotect-dropzone').style.display = 'block';
-            document.getElementById('unprotect-preview').style.display = 'none';
-            document.getElementById('unprotect-log').style.display = 'none';
+            uFile = null; document.getElementById('unprotect-file').value = ''; document.getElementById('unprotect-dropzone').style.display = 'block';
+            document.getElementById('unprotect-preview').style.display = 'none'; document.getElementById('unprotect-log').style.display = 'none';
             document.getElementById('unprotect-pass').value = '';
         }
 
         // PROTECT RUN
         let pFile = null;
         document.getElementById('protect-file').addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                pFile = e.target.files[0];
-                document.getElementById('protect-dropzone').style.display = 'none';
-                document.getElementById('protect-preview').style.display = 'flex';
-                document.getElementById('protect-filename').innerText = pFile.name;
-                let base = pFile.name.substring(0, pFile.name.lastIndexOf('.')) || pFile.name;
-                document.getElementById('protect-outname').value = `${base}-protected.pdf`;
-            }
+            if(e.target.files[0]) { pFile = e.target.files[0]; document.getElementById('protect-dropzone').style.display = 'none'; document.getElementById('protect-preview').style.display = 'flex'; document.getElementById('protect-filename').innerText = pFile.name; let base = pFile.name.substring(0, pFile.name.lastIndexOf('.')) || pFile.name; document.getElementById('protect-outname').value = `${base}-protected.pdf`; }
         });
 
         async function runProtect() {
@@ -437,16 +387,13 @@
                 const { jsPDF } = window.jspdf; let doc = null;
 
                 if (pFile.type === 'application/pdf') {
-                    const arr = await pFile.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arr }).promise;
+                    const arr = await pFile.arrayBuffer(); const pdf = await pdfjsLib.getDocument({ data: arr }).promise;
                     for(let i=1; i<=pdf.numPages; i++) {
                         log.innerHTML += `> Encrypting Page ${i}/${pdf.numPages}...<br>`;
-                        const page = await pdf.getPage(i);
-                        const vp = page.getViewport({ scale: 1.5 });
+                        const page = await pdf.getPage(i); const vp = page.getViewport({ scale: 1.5 });
                         const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
                         await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-                        const img = canvas.toDataURL('image/jpeg', 0.85);
-                        const orient = vp.width > vp.height ? 'l' : 'p';
+                        const img = canvas.toDataURL('image/jpeg', 0.85); const orient = vp.width > vp.height ? 'l' : 'p';
                         if(i===1) { doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height], encryption: { userPassword: pass, ownerPassword: pass } }); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                         else { doc.addPage([vp.width, vp.height], orient); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                     }
@@ -457,23 +404,15 @@
                 }
 
                 saveToVault(outname, 'locked', pass);
-                log.innerHTML += '> Success! Downloading...<br>';
-                doc.save(outname);
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                
-                setTimeout(resetProtect, 2000); 
+                log.innerHTML += '> Success! Downloading...<br>'; doc.save(outname);
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); setTimeout(resetProtect, 2000); 
             } catch(e) { log.innerHTML += `<span style="color:red">> Error: ${e.message}</span><br>`; }
         }
 
         // UNPROTECT RUN
         let uFile = null;
         document.getElementById('unprotect-file').addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                uFile = e.target.files[0];
-                document.getElementById('unprotect-dropzone').style.display = 'none';
-                document.getElementById('unprotect-preview').style.display = 'flex';
-                document.getElementById('unprotect-filename').innerText = uFile.name;
-            }
+            if(e.target.files[0]) { uFile = e.target.files[0]; document.getElementById('unprotect-dropzone').style.display = 'none'; document.getElementById('unprotect-preview').style.display = 'flex'; document.getElementById('unprotect-filename').innerText = uFile.name; }
         });
 
         async function runUnprotect() {
@@ -485,19 +424,16 @@
             log.style.display = 'block'; log.innerHTML = '> Attempting to breach security...<br>';
 
             try {
-                const arr = await uFile.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arr, password: pass }).promise;
+                const arr = await uFile.arrayBuffer(); const pdf = await pdfjsLib.getDocument({ data: arr, password: pass }).promise;
                 log.innerHTML += '> Password Accepted! Removing encryption...<br>';
                 
                 const { jsPDF } = window.jspdf; let doc = null;
                 for(let i=1; i<=pdf.numPages; i++) {
                     log.innerHTML += `> Extracting Page ${i}/${pdf.numPages}...<br>`;
-                    const page = await pdf.getPage(i);
-                    const vp = page.getViewport({ scale: 1.5 });
+                    const page = await pdf.getPage(i); const vp = page.getViewport({ scale: 1.5 });
                     const canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
                     await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-                    const img = canvas.toDataURL('image/jpeg', 0.85);
-                    const orient = vp.width > vp.height ? 'l' : 'p';
+                    const img = canvas.toDataURL('image/jpeg', 0.85); const orient = vp.width > vp.height ? 'l' : 'p';
                     if(i===1) { doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height] }); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                     else { doc.addPage([vp.width, vp.height], orient); doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height); }
                 }
@@ -505,10 +441,7 @@
                 let outname = uFile.name.replace('.pdf', '-unlocked.pdf');
                 saveToVault(outname, 'unlocked', pass);
                 log.innerHTML += '> Success! Downloading unlocked PDF...<br>';
-                doc.save(outname);
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                
-                setTimeout(resetUnprotect, 2000); 
+                doc.save(outname); confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); setTimeout(resetUnprotect, 2000); 
             } catch(e) {
                 if(e.name === 'PasswordException') { log.innerHTML += `<span style="color:var(--accent-red)">> ACCESS DENIED: Incorrect Password.</span><br>`; showToast("Access Denied: Incorrect Password", 'danger'); }
                 else { log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`; }
