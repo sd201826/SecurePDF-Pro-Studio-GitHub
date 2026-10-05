@@ -68,9 +68,9 @@
             margin-left: 270px; flex: 1; padding: 2.5rem 5%;
             background-image: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
                               radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
-            min-height: 100vh; padding-bottom: 5rem;
+            min-height: 100vh; padding-bottom: 5rem; display: flex; flex-direction: column;
         }
-        .section-view { display: none; animation: fadeIn 0.3s ease; }
+        .section-view { display: none; animation: fadeIn 0.3s ease; width: 100%; }
         .section-view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -79,7 +79,7 @@
         .page-desc { color: var(--text-muted); font-size: 0.95rem; }
 
         /* Master Lock Screens */
-        .auth-container { max-width: 450px; margin: 4rem auto; text-align: center; background: var(--bg-card); padding: 3rem 2rem; border-radius: 16px; border: 1px solid var(--accent-cyan); box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15); }
+        .auth-container { max-width: 450px; margin: 3rem auto; text-align: center; background: var(--bg-card); padding: 3rem 2rem; border-radius: 16px; border: 1px solid var(--accent-cyan); box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15); }
         .auth-container i { font-size: 4rem; color: var(--accent-cyan); margin-bottom: 1.5rem; }
         .auth-container h2 { margin-bottom: 0.5rem; }
         .auth-container p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
@@ -178,6 +178,570 @@
             <!-- DASHBOARD VAULT VIEW -->
             <div id="view-dashboard" class="section-view active">
                 
-                <div id="setup-screen" class="auth-container" style="display: none;">
+                <div id="setup-screen" class="auth-container">
                     <i class="fa-solid fa-key"></i>
                     <h2>Create Master Password</h2>
+                    <p>You must set a master password to secure your Vault.</p>
+                    <div class="form-group"><input type="password" id="setup-pass" class="form-input" placeholder="Create your master password" autocomplete="new-password"></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="setupMasterKey()">Secure My Vault</button>
+                </div>
+
+                <div id="lock-screen" class="auth-container" style="display: none;">
+                    <i class="fa-solid fa-lock"></i>
+                    <h2>Vault Locked</h2>
+                    <p>Enter your Master Password to access your saved files.</p>
+                    <div class="form-group"><input type="password" id="login-pass" class="form-input" placeholder="Enter master password" autocomplete="new-password"></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="unlockVault()">Unlock Vault</button>
+                </div>
+
+                <div id="vault-content" style="display: none;">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Security Vault</h1>
+                            <p class="page-desc">Your encrypted vault database. Protected by Master Key.</p>
+                        </div>
+                        <button class="btn btn-outline" onclick="lockVault()"><i class="fa-solid fa-lock"></i> Lock Vault</button>
+                    </div>
+                    <div class="vault-container">
+                        <table>
+                            <thead>
+                                <tr><th>File / Bundle Name</th><th>Status</th><th>Password</th><th>Date</th><th>Manage</th></tr>
+                            </thead>
+                            <tbody id="vault-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PROTECT PDF VIEW -->
+            <div id="view-protect" class="section-view">
+                <div class="page-header"><h1 class="page-title">Lock & Protect PDFs</h1></div>
+                <div class="card">
+                    
+                    <div class="dropzone" id="protect-dropzone" onclick="document.getElementById('protect-file').click()">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        <h4>Click or Drag Multiple Files Here to Protect</h4>
+                        <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Supports PDF, PNG, JPG (Select 1 or many files)</p>
+                    </div>
+                    <input type="file" id="protect-file" class="file-input" accept=".pdf,.jpg,.png" multiple>
+                    
+                    <div id="protect-file-container" style="display: none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem;">
+                            <h4 id="protect-file-count">Selected Files (0)</h4>
+                            <button class="action-btn delete" onclick="resetProtect()"><i class="fa-solid fa-trash"></i> Clear All</button>
+                        </div>
+
+                        <!-- Mode Selector -->
+                        <div class="mode-selector" style="margin-top: 1rem;">
+                            <div class="mode-btn active" id="p-mode-same" onclick="setProtectMode('same')"><i class="fa-solid fa-key"></i> Same Password for All Files</div>
+                            <div class="mode-btn" id="p-mode-indiv" onclick="setProtectMode('indiv')"><i class="fa-solid fa-list-check"></i> Individual Password for Each File</div>
+                        </div>
+
+                        <!-- Single Master Input -->
+                        <div class="form-group" id="p-single-pass-group">
+                            <label class="form-label">Set Password for All Files</label>
+                            <input type="text" id="protect-pass" class="form-input" placeholder="Enter secure password" autocomplete="new-password">
+                        </div>
+
+                        <!-- Render Batch List -->
+                        <div class="batch-file-list" id="protect-batch-list"></div>
+
+                        <!-- ZIP & Folder Settings -->
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-folder-closed" style="color:var(--accent-cyan)"></i> Folder Name (Inside Download Archive)</label>
+                            <input type="text" id="protect-foldername" class="form-input" value="Secure_Protected_Files" placeholder="Enter folder name">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display:block; margin-top: 0.4rem;">Note: If 1 file is selected, it downloads directly. If 2+ files are selected, it packages into a ZIP archive with this folder name!</span>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="runProtect()"><i class="fa-solid fa-lock"></i> Encrypt & Download</button>
+                    </div>
+
+                    <div class="terminal-log" id="protect-log" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- UNPROTECT PDF VIEW -->
+            <div id="view-unprotect" class="section-view">
+                <div class="page-header"><h1 class="page-title">Unprotect PDFs (Remove Passwords)</h1></div>
+                <div class="card">
+                    
+                    <div class="dropzone" id="unprotect-dropzone" onclick="document.getElementById('unprotect-file').click()">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                        <h4>Click or Drag Multiple Locked PDFs Here</h4>
+                        <p style="color:var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Select 1 or multiple locked PDFs</p>
+                    </div>
+                    <input type="file" id="unprotect-file" class="file-input" accept=".pdf" multiple>
+
+                    <div id="unprotect-file-container" style="display: none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem;">
+                            <h4 id="unprotect-file-count">Selected Locked Files (0)</h4>
+                            <button class="action-btn delete" onclick="resetUnprotect()"><i class="fa-solid fa-trash"></i> Clear All</button>
+                        </div>
+
+                        <!-- Mode Selector -->
+                        <div class="mode-selector" style="margin-top: 1rem;">
+                            <div class="mode-btn active" id="u-mode-same" onclick="setUnprotectMode('same')"><i class="fa-solid fa-key"></i> Same Password for All</div>
+                            <div class="mode-btn" id="u-mode-indiv" onclick="setUnprotectMode('indiv')"><i class="fa-solid fa-list-check"></i> Individual Passwords</div>
+                        </div>
+
+                        <!-- Single Master Input -->
+                        <div class="form-group" id="u-single-pass-group">
+                            <label class="form-label">Current Password for All PDFs</label>
+                            <input type="text" id="unprotect-pass" class="form-input" placeholder="Enter password to unlock" autocomplete="new-password">
+                        </div>
+
+                        <!-- Render Batch List -->
+                        <div class="batch-file-list" id="unprotect-batch-list"></div>
+
+                        <!-- ZIP & Folder Settings -->
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa-solid fa-folder-open" style="color:var(--accent-cyan)"></i> Folder Name (Inside Download Archive)</label>
+                            <input type="text" id="unprotect-foldername" class="form-input" value="Unlocked_Files" placeholder="Enter folder name">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display:block; margin-top: 0.4rem;">Note: If 1 file is selected, it downloads directly. If 2+ files are selected, it packages into a ZIP archive with this folder name!</span>
+                        </div>
+
+                        <button class="btn btn-danger" style="width: 100%;" onclick="runUnprotect()"><i class="fa-solid fa-fire"></i> Strip Security & Download</button>
+                    </div>
+
+                    <div class="terminal-log" id="unprotect-log" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- FOOTER BRANDING -->
+            <div class="powered-by-footer">
+                Powered by <strong>SecurePDF Pro Studio</strong> — Browser-Side Zero Trust Security
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Safely set PDF worker once available
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById("toast");
+            toast.className = "";
+            document.getElementById("toast-msg").innerHTML = message;
+            toast.classList.add(type === 'danger' ? 'toast-danger' : 'toast-success', "show");
+            setTimeout(() => toast.classList.remove("show"), 3800);
+        }
+
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            if(tabId === 'dashboard') manageVaultState();
+        }
+
+        // --- MASTER PASSWORD SYSTEM ---
+        let masterKey = localStorage.getItem('securePDFMasterKey');
+        let vaultUnlocked = false;
+
+        function manageVaultState() {
+            const setupEl = document.getElementById('setup-screen');
+            const lockEl = document.getElementById('lock-screen');
+            const vaultEl = document.getElementById('vault-content');
+
+            if (!setupEl || !lockEl || !vaultEl) return;
+
+            setupEl.style.display = 'none';
+            lockEl.style.display = 'none';
+            vaultEl.style.display = 'none';
+
+            if (!masterKey) {
+                setupEl.style.display = 'block';
+            } else if (!vaultUnlocked) {
+                lockEl.style.display = 'block';
+            } else {
+                vaultEl.style.display = 'block';
+                renderVault();
+            }
+        }
+
+        function setupMasterKey() {
+            const pass = document.getElementById('setup-pass').value;
+            if (!pass) return alert("Please type a master password.");
+            masterKey = btoa(pass); localStorage.setItem('securePDFMasterKey', masterKey);
+            vaultUnlocked = true; document.getElementById('setup-pass').value = '';
+            showToast("<i class='fa-solid fa-shield'></i> Master Password Secured!", "success");
+            manageVaultState();
+        }
+
+        function unlockVault() {
+            const pass = document.getElementById('login-pass').value;
+            if (btoa(pass) === masterKey) {
+                vaultUnlocked = true; document.getElementById('login-pass').value = '';
+                showToast("<i class='fa-solid fa-unlock'></i> Vault Unlocked", "success");
+                manageVaultState();
+            } else {
+                showToast("<i class='fa-solid fa-triangle-exclamation'></i> Incorrect Master Password", "danger");
+                document.getElementById('login-pass').value = '';
+            }
+        }
+
+        function lockVault() { vaultUnlocked = false; showToast("<i class='fa-solid fa-lock'></i> Vault Locked", "success"); manageVaultState(); }
+
+        // --- VAULT STORAGE LOGIC ---
+        let vaultData = JSON.parse(localStorage.getItem('secureVault')) || [];
+
+        function saveToVault(filename, type, password) {
+            const entry = { id: Date.now() + Math.floor(Math.random()*1000), filename: filename, type: type, password: password, date: new Date().toLocaleDateString() };
+            vaultData.push(entry); localStorage.setItem('secureVault', JSON.stringify(vaultData));
+        }
+
+        function deleteVaultEntry(id) {
+            if (confirm("Permanently delete this record from the Vault?")) {
+                vaultData = vaultData.filter(item => item.id !== id);
+                localStorage.setItem('secureVault', JSON.stringify(vaultData));
+                renderVault();
+                showToast("<i class='fa-solid fa-trash-can'></i> Record removed from Vault", 'danger');
+            }
+        }
+
+        function quickUnlockSend(password) {
+            switchTab('unprotect');
+            document.getElementById('unprotect-pass').value = password;
+            showToast("<i class='fa-solid fa-key'></i> Password copied to Unprotect tab!", 'success');
+        }
+
+        function togglePassword(id) {
+            const span = document.getElementById(`pass-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            if (span.dataset.hidden === "true") { span.innerText = span.dataset.pass; span.dataset.hidden = "false"; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
+            else { span.innerText = "••••••••"; span.dataset.hidden = "true"; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+        }
+
+        function renderVault() {
+            const tbody = document.getElementById('vault-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if (vaultData.length === 0) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-box-open"></i><h3>Your Vault is Empty</h3><p>Protected and unlocked files will automatically save here.</p></div></td></tr>`; return; }
+
+            vaultData.slice().reverse().forEach(item => {
+                const badge = item.type === 'locked' ? `<span class="badge badge-locked">LOCKED</span>` : `<span class="badge badge-unlocked">UNLOCKED</span>`;
+                const passHtml = item.password ? `<div class="password-reveal"><span id="pass-${item.id}" data-pass="${item.password}" data-hidden="true">••••••••</span><button class="action-btn" onclick="togglePassword(${item.id})"><i id="icon-${item.id}" class="fa-solid fa-eye"></i></button></div>` : `<span style="color:var(--text-muted)">N/A</span>`;
+                
+                const actionButtons = `
+                    <div style="display:flex; gap:0.5rem;">
+                        ${item.type === 'locked' ? `<button class="action-btn unlock-btn" onclick="quickUnlockSend('${item.password}')" title="Quick Unlock File"><i class="fa-solid fa-unlock"></i></button>` : ''}
+                        <button class="action-btn delete" onclick="deleteVaultEntry(${item.id})" title="Delete Record from Vault"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                tbody.innerHTML += `<tr><td style="font-weight: 600;">${item.filename}</td><td>${badge}</td><td>${passHtml}</td><td>${item.date}</td><td>${actionButtons}</td></tr>`;
+            });
+        }
+
+        // --- HELPER: FILE DOWNLOAD ---
+        function triggerDownload(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        // ==========================================
+        // --- BATCH PROTECT LOGIC ---
+        // ==========================================
+        let pFiles = [];
+        let pMode = 'same'; // 'same' or 'indiv'
+
+        function setProtectMode(mode) {
+            pMode = mode;
+            document.getElementById('p-mode-same').classList.toggle('active', mode === 'same');
+            document.getElementById('p-mode-indiv').classList.toggle('active', mode === 'indiv');
+            document.getElementById('p-single-pass-group').style.display = mode === 'same' ? 'block' : 'none';
+            renderProtectList();
+        }
+
+        function removeProtectFile(index) {
+            pFiles.splice(index, 1);
+            if(pFiles.length === 0) resetProtect(); else renderProtectList();
+        }
+
+        function resetProtect() {
+            pFiles = [];
+            document.getElementById('protect-file').value = '';
+            document.getElementById('protect-dropzone').style.display = 'block';
+            document.getElementById('protect-file-container').style.display = 'none';
+            document.getElementById('protect-log').style.display = 'none';
+        }
+
+        function renderProtectList() {
+            document.getElementById('protect-dropzone').style.display = 'none';
+            document.getElementById('protect-file-container').style.display = 'block';
+            document.getElementById('protect-file-count').innerText = `Selected Files (${pFiles.length})`;
+
+            const list = document.getElementById('protect-batch-list');
+            list.innerHTML = '';
+
+            pFiles.forEach((file, i) => {
+                const indivInput = pMode === 'indiv' ? 
+                    `<input type="text" class="form-input p-indiv-pass" data-index="${i}" placeholder="Password for this file" style="width:200px; padding:0.4rem 0.8rem; font-size:0.85rem;">` : '';
+                
+                list.innerHTML += `
+                    <div class="file-item-row">
+                        <i class="fa-solid fa-file-pdf" style="color:var(--accent-cyan);"></i>
+                        <span class="file-item-name">${file.name}</span>
+                        ${indivInput}
+                        <button class="action-btn delete" onclick="removeProtectFile(${i})"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        async function runProtect() {
+            if(pFiles.length === 0) return alert('Please select files first!');
+
+            let masterPass = document.getElementById('protect-pass').value;
+            if(pMode === 'same' && !masterPass) return alert('Please enter a password for all files!');
+
+            const indivInputs = document.querySelectorAll('.p-indiv-pass');
+            let indivPasswords = [];
+            if(pMode === 'indiv') {
+                for(let inp of indivInputs) {
+                    if(!inp.value.trim()) return alert(`Please enter a password for file ${pFiles[inp.dataset.index].name}`);
+                    indivPasswords[inp.dataset.index] = inp.value.trim();
+                }
+            }
+
+            const folderName = document.getElementById('protect-foldername').value.trim() || 'Secure_Protected_Files';
+            const log = document.getElementById('protect-log');
+            log.style.display = 'block';
+            log.innerHTML = `> Processing ${pFiles.length} file(s) with SecurePDF Pro Studio...<br>`;
+
+            const zip = pFiles.length > 1 ? new JSZip() : null;
+            const targetFolder = zip ? zip.folder(folderName) : null;
+
+            try {
+                const { jsPDF } = window.jspdf;
+
+                for(let i = 0; i < pFiles.length; i++) {
+                    const file = pFiles[i];
+                    const filePass = pMode === 'same' ? masterPass : indivPasswords[i];
+                    log.innerHTML += `> Encrypting [${i+1}/${pFiles.length}] ${file.name}...<br>`;
+
+                    let doc = null;
+                    if (file.type === 'application/pdf') {
+                        const arr = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arr }).promise;
+                        for(let p = 1; p <= pdf.numPages; p++) {
+                            const page = await pdf.getPage(p);
+                            const vp = page.getViewport({ scale: 1.5 });
+                            const canvas = document.createElement('canvas');
+                            canvas.width = vp.width; canvas.height = vp.height;
+                            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+                            const img = canvas.toDataURL('image/jpeg', 0.85);
+                            const orient = vp.width > vp.height ? 'l' : 'p';
+                            
+                            if(p === 1) {
+                                doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height], encryption: { userPassword: filePass, ownerPassword: filePass } });
+                                doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
+                            } else {
+                                doc.addPage([vp.width, vp.height], orient);
+                                doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
+                            }
+                        }
+                    } else {
+                        doc = new jsPDF({ encryption: { userPassword: filePass, ownerPassword: filePass } });
+                        const b64 = await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result); f.readAsDataURL(file); });
+                        doc.addImage(b64, 'JPEG', 10, 10, 190, 0);
+                    }
+
+                    const outName = file.name.replace(/\.[^/.]+$/, "") + "-protected.pdf";
+                    const pdfBlob = doc.output('blob');
+
+                    saveToVault(outName, 'locked', filePass);
+
+                    if(zip) {
+                        targetFolder.file(outName, pdfBlob);
+                    } else {
+                        triggerDownload(pdfBlob, outName);
+                    }
+                }
+
+                if(zip) {
+                    log.innerHTML += `> Packaging into ZIP archive (${folderName}.zip)...<br>`;
+                    const zipContent = await zip.generateAsync({ type: "blob" });
+                    triggerDownload(zipContent, `${folderName}.zip`);
+                }
+
+                log.innerHTML += `> Success! All files processed and auto-saved to Vault.<br>`;
+                showToast(`<i class="fa-solid fa-circle-check"></i> Processed ${pFiles.length} file(s) successfully!`);
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                setTimeout(resetProtect, 2500);
+
+            } catch(e) {
+                log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`;
+            }
+        }
+
+        // ==========================================
+        // --- BATCH UNPROTECT LOGIC ---
+        // ==========================================
+        let uFiles = [];
+        let uMode = 'same'; // 'same' or 'indiv'
+
+        function setUnprotectMode(mode) {
+            uMode = mode;
+            document.getElementById('u-mode-same').classList.toggle('active', mode === 'same');
+            document.getElementById('u-mode-indiv').classList.toggle('active', mode === 'indiv');
+            document.getElementById('u-single-pass-group').style.display = mode === 'same' ? 'block' : 'none';
+            renderUnprotectList();
+        }
+
+        function removeUnprotectFile(index) {
+            uFiles.splice(index, 1);
+            if(uFiles.length === 0) resetUnprotect(); else renderUnprotectList();
+        }
+
+        function resetUnprotect() {
+            uFiles = [];
+            document.getElementById('unprotect-file').value = '';
+            document.getElementById('unprotect-dropzone').style.display = 'block';
+            document.getElementById('unprotect-file-container').style.display = 'none';
+            document.getElementById('unprotect-log').style.display = 'none';
+        }
+
+        function renderUnprotectList() {
+            document.getElementById('unprotect-dropzone').style.display = 'none';
+            document.getElementById('unprotect-file-container').style.display = 'block';
+            document.getElementById('unprotect-file-count').innerText = `Selected Locked Files (${uFiles.length})`;
+
+            const list = document.getElementById('unprotect-batch-list');
+            list.innerHTML = '';
+
+            uFiles.forEach((file, i) => {
+                const indivInput = uMode === 'indiv' ? 
+                    `<input type="text" class="form-input u-indiv-pass" data-index="${i}" placeholder="Current password" style="width:200px; padding:0.4rem 0.8rem; font-size:0.85rem;">` : '';
+                
+                list.innerHTML += `
+                    <div class="file-item-row">
+                        <i class="fa-solid fa-file-shield" style="color:var(--accent-red);"></i>
+                        <span class="file-item-name">${file.name}</span>
+                        ${indivInput}
+                        <button class="action-btn delete" onclick="removeUnprotectFile(${i})"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        async function runUnprotect() {
+            if(uFiles.length === 0) return alert('Please select locked PDF files first!');
+
+            let masterPass = document.getElementById('unprotect-pass').value;
+            if(uMode === 'same' && !masterPass) return alert('Please enter current password!');
+
+            const indivInputs = document.querySelectorAll('.u-indiv-pass');
+            let indivPasswords = [];
+            if(uMode === 'indiv') {
+                for(let inp of indivInputs) {
+                    if(!inp.value.trim()) return alert(`Please enter password for ${uFiles[inp.dataset.index].name}`);
+                    indivPasswords[inp.dataset.index] = inp.value.trim();
+                }
+            }
+
+            const folderName = document.getElementById('unprotect-foldername').value.trim() || 'Unlocked_Files';
+            const log = document.getElementById('unprotect-log');
+            log.style.display = 'block';
+            log.innerHTML = `> Unlocking ${uFiles.length} file(s) with SecurePDF Pro Studio...<br>`;
+
+            const zip = uFiles.length > 1 ? new JSZip() : null;
+            const targetFolder = zip ? zip.folder(folderName) : null;
+
+            try {
+                const { jsPDF } = window.jspdf;
+
+                for(let i = 0; i < uFiles.length; i++) {
+                    const file = uFiles[i];
+                    const filePass = uMode === 'same' ? masterPass : indivPasswords[i];
+                    log.innerHTML += `> Unlocking [${i+1}/${uFiles.length}] ${file.name}...<br>`;
+
+                    const arr = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arr, password: filePass }).promise;
+
+                    let doc = null;
+                    for(let p = 1; p <= pdf.numPages; p++) {
+                        const page = await pdf.getPage(p);
+                        const vp = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = vp.width; canvas.height = vp.height;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+                        const img = canvas.toDataURL('image/jpeg', 0.85);
+                        const orient = vp.width > vp.height ? 'l' : 'p';
+                        
+                        if(p === 1) {
+                            doc = new jsPDF({ orientation: orient, unit: 'px', format: [vp.width, vp.height] });
+                            doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
+                        } else {
+                            doc.addPage([vp.width, vp.height], orient);
+                            doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
+                        }
+                    }
+
+                    const outName = file.name.replace(/\.[^/.]+$/, "") + "-unlocked.pdf";
+                    const pdfBlob = doc.output('blob');
+
+                    saveToVault(outName, 'unlocked', filePass);
+
+                    if(zip) {
+                        targetFolder.file(outName, pdfBlob);
+                    } else {
+                        triggerDownload(pdfBlob, outName);
+                    }
+                }
+
+                if(zip) {
+                    log.innerHTML += `> Packaging into ZIP archive (${folderName}.zip)...<br>`;
+                    const zipContent = await zip.generateAsync({ type: "blob" });
+                    triggerDownload(zipContent, `${folderName}.zip`);
+                }
+
+                log.innerHTML += `> Success! All files unlocked.<br>`;
+                showToast(`<i class="fa-solid fa-circle-check"></i> Unlocked ${uFiles.length} file(s) successfully!`);
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                setTimeout(resetUnprotect, 2500);
+
+            } catch(e) {
+                if(e.name === 'PasswordException') {
+                    log.innerHTML += `<span style="color:var(--accent-red)">> ACCESS DENIED: Incorrect password provided.</span><br>`;
+                    showToast("Incorrect password provided for file", 'danger');
+                } else {
+                    log.innerHTML += `<span style="color:var(--accent-red)">> Error: ${e.message}</span><br>`;
+                }
+            }
+        }
+
+        // Safe DOM initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            manageVaultState();
+
+            document.getElementById('protect-file').addEventListener('change', (e) => {
+                if(e.target.files.length > 0) {
+                    pFiles = Array.from(e.target.files);
+                    renderProtectList();
+                }
+            });
+
+            document.getElementById('unprotect-file').addEventListener('change', (e) => {
+                if(e.target.files.length > 0) {
+                    uFiles = Array.from(e.target.files);
+                    renderUnprotectList();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
